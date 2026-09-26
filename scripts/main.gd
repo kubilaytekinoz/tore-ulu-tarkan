@@ -404,7 +404,7 @@ func _effects_text(effects: Dictionary) -> String:
         var value := int(effects[key])
         if value == 0:
             continue
-        var magnitude := abs(value)
+        var magnitude: int = absi(value)
         var arrows := "↑" if value > 0 else "↓"
         if magnitude >= 8:
             arrows += arrows + arrows
