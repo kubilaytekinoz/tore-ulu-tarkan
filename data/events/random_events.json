@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "note": "Mevsim geçişlerinde ana senaryonun arasına giren kısa dünya olayları. Sayısal sonuçlar görünmez; oyuncuya yalnız yön ve şiddet gösterilir.",
+  "version": 3,
+  "note": "Mevsim değişimi ekranda sessizce ilerler. Yalnızca gerçekten bir dünya olayı olduğunda tek bir haber ekranı açılır. Olaylar art arda gelmez.",
   "events": [
     {
       "id": "winter_hard_frost",
@@ -11,11 +11,11 @@
       "once_per_year": true,
       "kicker": "KIŞLAKTAN HABER",
       "title": "SERT AYAZ",
-      "text": "Gece sıcaklığı ansızın düştü. İki obada sürüler zayıfladı, odun ve yem fiyatı yükseldi.",
+      "text": "Gece ayazı sürüleri vurdu. Yem azaldı, birkaç oba hayvan kaybetti.",
       "tone": "danger",
       "effects": {
-        "halk": -2,
-        "hazine": -2
+        "halk": -1,
+        "hazine": -1
       }
     },
     {
@@ -23,21 +23,30 @@
       "seasons": [
         "Kış"
       ],
-      "weight": 4,
+      "weight": 3,
       "once_per_year": true,
       "kicker": "KARA KIŞ",
       "title": "ERZAK DARLIĞI",
-      "text": "Ambarlar beklenenden hızlı boşalıyor. Kuzey obalarından açlık haberleri geliyor; yardım gecikirse huzursuzluk büyüyecek.",
+      "text": "Ambarlar hızla boşalıyor. Kuzey obalarında açlık başladı; yardım edilmezse düzen bozulacak.",
       "tone": "danger",
       "requires": {
-        "source": "stats",
-        "key": "hazine",
-        "lte": 48
+        "all": [
+          {
+            "source": "stats",
+            "key": "hazine",
+            "lte": 3
+          },
+          {
+            "source": "stats",
+            "key": "halk",
+            "lte": 4
+          }
+        ]
       },
       "effects": {
-        "halk": -5,
-        "hazine": -4,
-        "kut": -2
+        "halk": -2,
+        "hazine": -1,
+        "kut": -1
       },
       "state": {
         "boy_anger": 1
@@ -51,11 +60,11 @@
       "weight": 3,
       "once_per_year": true,
       "kicker": "BOZKIRDAN HABER",
-      "title": "SÜRÜLER TOPARLANIYOR",
-      "text": "Kıştan çıkan sürüler beklenenden iyi durumda. Yeni doğumlar obaların yüzünü güldürdü.",
+      "title": "SÜRÜLER TOPARLANDI",
+      "text": "Kıştan çıkan sürüler beklenenden iyi durumda. Yeni doğumlar obalara biraz nefes aldırdı.",
       "tone": "positive",
       "effects": {
-        "halk": 2,
+        "halk": 1,
         "hazine": 1
       }
     },
@@ -68,10 +77,10 @@
       "once_per_year": true,
       "kicker": "YOLLARDAN HABER",
       "title": "IRMAK TAŞTI",
-      "text": "Eriyen karlar doğu yolunu bastı. Birkaç köprü yıkıldı; ulaklar ve erzak kervanları gecikiyor.",
+      "text": "Eriyen karlar doğu yolunu kapattı. Kervanlar ve ulaklar günlerce gecikecek.",
       "tone": "danger",
       "effects": {
-        "hazine": -2,
+        "hazine": -1,
         "ordu": -1
       }
     },
@@ -84,11 +93,11 @@
       "once_per_year": true,
       "kicker": "OTLAKLARDAN HABER",
       "title": "KURAKLIK",
-      "text": "Yağmur gecikti. Güney otlakları sarardı; su başlarında boylar arasında tartışmalar başladı.",
+      "text": "Yağmur gecikti. Su başlarında boylar arasında kavga başladı, otlaklar hızla sararıyor.",
       "tone": "danger",
       "effects": {
-        "halk": -3,
-        "hazine": -2
+        "halk": -1,
+        "hazine": -1
       },
       "state": {
         "boy_anger": 1
@@ -103,10 +112,10 @@
       "once_per_year": true,
       "kicker": "KAĞANLIKTA",
       "title": "BEREKETLİ AV",
-      "text": "Avcı birlikleri dolu döndü. Et obalara dağıtıldı, toyda Kağan'ın cömertliği konuşuluyor.",
+      "text": "Avcı birlikleri dolu döndü. Et obalara dağıtıldı; toyda Kağan'ın cömertliği konuşuluyor.",
       "tone": "positive",
       "effects": {
-        "halk": 2,
+        "halk": 1,
         "kut": 1
       }
     },
@@ -119,10 +128,10 @@
       "once_per_year": true,
       "kicker": "KERVAN YOLUNDAN",
       "title": "TÜCCAR KERVANI",
-      "text": "Batıdan büyük bir kervan ulaştı. Demir, kumaş ve gümüş piyasaya girdi; hazine nefes aldı.",
+      "text": "Batıdan gelen büyük kervan hazineye vergi bıraktı; pazarda demir ve kumaş çoğaldı.",
       "tone": "positive",
       "effects": {
-        "hazine": 3,
+        "hazine": 1,
         "kut": 1
       }
     },
@@ -135,11 +144,11 @@
       "once_per_year": true,
       "kicker": "ORDUGÂHTAN HABER",
       "title": "ATLARDA HASTALIK",
-      "text": "Süvari atlarının bir kısmında ateş ve halsizlik görüldü. Hastalık yayılmadan sürülerin ayrılması gerekiyor.",
+      "text": "Süvari atlarında ateş görüldü. Hastalık yayılmadan sürülerin ayrılması gerekiyor.",
       "tone": "danger",
       "effects": {
-        "ordu": -3,
-        "hazine": -2
+        "ordu": -1,
+        "hazine": -1
       }
     }
   ]

@@ -9,11 +9,11 @@
     "birth_year": 642
   },
   "stats": {
-    "kut": 61,
-    "halk": 54,
-    "ordu": 67,
-    "hazine": 46,
-    "guven": 58
+    "kut": 6,
+    "halk": 6,
+    "ordu": 7,
+    "hazine": 5,
+    "guven": 6
   },
   "story_state": {
     "boy_anger": 0,
@@ -75,12 +75,15 @@
   "flags": [],
   "history": [],
   "simulation": {
-    "season_event_chance": 0.68,
+    "season_event_chance": 0.36,
+    "world_event_min_gap_turns": 3,
     "score_rules": {
-      "minor": "1–2",
-      "meaningful": "3–5",
-      "major": "6+",
-      "note": "Büyük görünür kazançlar mümkün olduğunca başka bir kaynak, gizli ilişki veya gelecek olay riskiyle dengelenir."
+      "scale": "0–10",
+      "minor": "1",
+      "meaningful": "2",
+      "major": "3",
+      "critical_zone": "0–1",
+      "note": "Her puan önemlidir. Büyük kazançlar başka bir kaynak, siyasi ilişki veya gelecek riskle dengelenir."
     }
   }
 }

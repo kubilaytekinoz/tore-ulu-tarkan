@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "note": "0–1 kritik bölgedir. Kurallar yukarıdan aşağıya değerlendirilir; ilk eşleşme dönemin gidişini kırar.",
+  "crises": [
+    {
+      "id": "famine_destroys_court",
+      "once_flag": "crisis_famine_destroys_court",
+      "when": {
+        "all": [
+          {
+            "source": "stats",
+            "key": "halk",
+            "lte": 1
+          },
+          {
+            "source": "stats",
+            "key": "hazine",
+            "lte": 1
+          }
+        ]
+      },
+      "target_id": "crisis_famine_01",
+      "set_ruler": "arslan_tegin",
+      "character_updates": {
+        "boru_kagan": {
+          "alive": false
+        },
+        "kara_yabgu": {
+          "alive": false
+        }
+      },
+      "set_flags": [
+        "boru_dead_famine",
+        "realm_rebuild_after_famine"
+      ]
+    },
+    {
+      "id": "kut_breaks_throne",
+      "once_flag": "crisis_kut_breaks_throne",
+      "when": {
+        "source": "stats",
+        "key": "kut",
+        "lte": 1
+      },
+      "target_id": "crisis_kut_break_01",
+      "set_ruler": "arslan_tegin",
+      "character_updates": {
+        "boru_kagan": {
+          "alive": false
+        }
+      },
+      "set_flags": [
+        "boru_dead_coup",
+        "arslan_seized_throne"
+      ]
+    },
+    {
+      "id": "army_breaks_center",
+      "once_flag": "crisis_army_breaks_center",
+      "when": {
+        "all": [
+          {
+            "source": "stats",
+            "key": "ordu",
+            "lte": 1
+          },
+          {
+            "key": "kara_power",
+            "gte": 2
+          }
+        ]
+      },
+      "target_id": "crisis_army_break_01",
+      "set_ruler": "kara_yabgu",
+      "character_updates": {
+        "boru_kagan": {
+          "alive": false
+        }
+      },
+      "set_flags": [
+        "boru_deposed_by_army_collapse",
+        "kara_controls_capital"
+      ]
+    }
+  ]
+}

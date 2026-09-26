@@ -21,8 +21,9 @@ const DYNASTIES_PATH: String = "res://data/dynasties.json"
 const WORLD_STATE_PATH: String = "res://data/world_state.json"
 const SCENARIO_INDEX_PATH: String = "res://data/scenarios/index.json"
 const RANDOM_EVENTS_PATH: String = "res://data/events/random_events.json"
+const CRISIS_EVENTS_PATH: String = "res://data/events/crisis_events.json"
 
-var stats: Dictionary = {"kut":61, "halk":54, "ordu":67, "hazine":46, "guven":58}
+var stats: Dictionary = {"kut":6, "halk":6, "ordu":7, "hazine":5, "guven":6}
 var year: int = 682
 var season: String = "Sonbahar"
 var cards: Array = []
@@ -32,6 +33,7 @@ var dynasties: Dictionary = {}
 var world_defaults: Dictionary = {}
 var scenario_index: Dictionary = {}
 var random_events: Array = []
+var crisis_rules: Array = []
 var character_state: Dictionary = {}
 var flags: Array[String] = []
 var history: Array[Dictionary] = []
@@ -40,6 +42,7 @@ var current_ruler_id: String = ""
 var scenario_start: String = ""
 var current_card_id: String = ""
 var turn_no: int = 0
+var last_world_event_turn: int = -999
 var input_locked: bool = false
 var event_overlay_active: bool = false
 var event_queue: Array[Dictionary] = []
@@ -202,7 +205,7 @@ func _build_menu() -> void:
     col.add_child(settings_btn)
 
     var version: Label = Label.new()
-    version.text = "PROTOTİP  •  v1.2"
+    version.text = "PROTOTİP  •  v1.3"
     version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     version.add_theme_font_size_override("font_size", 18)
     version.add_theme_color_override("font_color", Color("#687483"))
@@ -719,19 +722,6 @@ func _animate_card_in() -> void:
     tween.parallel().tween_property(choices_container, "modulate:a", 1.0, 0.30)
     await tween.finished
 
-func _season_transition_text(target_season: String) -> String:
-    match target_season:
-        "Kış":
-            return "Ayaz bozkıra indi. Sürüler kışlaklara çekildi; erzak, yakacak ve sabır artık daha kıymetli."
-        "İlkbahar":
-            return "Kar çözülüyor, yollar yeniden açılıyor. Boylar göç hazırlığında; haberler otağa daha hızlı ulaşacak."
-        "Yaz":
-            return "Bozkır kuruyor. Sefer mevsimi açıldı; atlar güçlü, fakat su ve otlak üzerindeki baskı artıyor."
-        "Sonbahar":
-            return "Sürüler kışlaklara dönüyor. Her oba ambarını sayıyor; yaklaşan soğuk için alınan kararların hesabı görülüyor."
-        _:
-            return "Bozkırda zaman ilerliyor ve dengeler değişiyor."
-
 func _queue_time_and_world_events(previous_year: int, previous_season: String) -> void:
     if turn_no <= 0:
         return
@@ -739,13 +729,6 @@ func _queue_time_and_world_events(previous_year: int, previous_season: String) -
     if year == previous_year and season == previous_season:
         return
 
-    _queue_event({
-        "kicker": "ZAMAN GEÇİYOR",
-        "title": "%d  •  %s" % [year, season.to_upper()],
-        "text": _season_transition_text(season),
-        "effects_text": "",
-        "tone": "neutral"
-    })
     _maybe_queue_world_event()
 
 func _maybe_queue_world_event() -> void:
@@ -753,7 +736,11 @@ func _maybe_queue_world_event() -> void:
         return
 
     var simulation: Dictionary = world_defaults.get("simulation", {}) as Dictionary
-    var chance: float = float(simulation.get("season_event_chance", 0.62))
+    var chance: float = float(simulation.get("season_event_chance", 0.36))
+    var min_gap: int = int(simulation.get("world_event_min_gap_turns", 3))
+    if turn_no - last_world_event_turn < min_gap:
+        return
+
     var eligible: Array[Dictionary] = []
 
     for event_variant: Variant in random_events:
@@ -794,6 +781,7 @@ func _maybe_queue_world_event() -> void:
     for key: Variant in state_effects.keys():
         story_state[key] = int(story_state.get(key, 0)) + int(state_effects[key])
 
+    last_world_event_turn = turn_no
     _set_flag("world_event_%s_%d" % [str(selected.get("id", "")), year])
     history.append({
         "year": year,
@@ -847,6 +835,8 @@ func _load_game_data() -> void:
     scenario_index = _load_json_dict(SCENARIO_INDEX_PATH)
     var random_doc: Dictionary = _load_json_dict(RANDOM_EVENTS_PATH)
     random_events = random_doc.get("events", []) as Array
+    var crisis_doc: Dictionary = _load_json_dict(CRISIS_EVENTS_PATH)
+    crisis_rules = crisis_doc.get("crises", []) as Array
 
     current_era_id = str(world_defaults.get("start_era", scenario_index.get("start_era", "boru_era")))
     _load_scenario(current_era_id)
@@ -916,6 +906,7 @@ func _start_game() -> void:
     year = int(world_defaults.get("start_year", 682))
     season = str(world_defaults.get("start_season", "Sonbahar"))
     turn_no = 0
+    last_world_event_turn = -999
     current_card_id = scenario_start
     menu_layer.visible = false
     game_layer.visible = true
@@ -959,7 +950,9 @@ func _show_card() -> void:
         feedback_label.text = str(card.get("hint", "Kararını ver, Ulu Tarkan."))
 
     _refresh_year()
-    _queue_time_and_world_events(previous_year, previous_season)
+    var presentation: Dictionary = card.get("presentation", {}) as Dictionary
+    if presentation.is_empty():
+        _queue_time_and_world_events(previous_year, previous_season)
     _queue_important_card(card)
 
 func _set_character(character_id: String) -> void:
@@ -1030,7 +1023,9 @@ func _choose(side: String) -> void:
     feedback_label.text = _effects_text(effects)
     turn_no += 1
 
-    var next_id: String = _resolve_next(choice.get("next", ""))
+    var next_id: String = _resolve_critical_crisis()
+    if next_id.is_empty():
+        next_id = _resolve_next(choice.get("next", ""))
     if next_id.is_empty():
         next_id = _resolve_next(card.get("next", ""))
 
@@ -1044,6 +1039,48 @@ func _choose(side: String) -> void:
     else:
         input_locked = false
         _set_choice_buttons_enabled(true)
+
+func _resolve_critical_crisis() -> String:
+    for rule_variant: Variant in crisis_rules:
+        var rule: Dictionary = rule_variant as Dictionary
+        var once_flag: String = str(rule.get("once_flag", ""))
+        if not once_flag.is_empty() and flags.has(once_flag):
+            continue
+
+        var condition: Dictionary = rule.get("when", {}) as Dictionary
+        if condition.is_empty() or not _condition_matches(condition):
+            continue
+
+        if not once_flag.is_empty():
+            _set_flag(once_flag)
+
+        var extra_flags: Array = rule.get("set_flags", []) as Array
+        for flag_value: Variant in extra_flags:
+            _set_flag(str(flag_value))
+
+        var ruler_id: String = str(rule.get("set_ruler", ""))
+        if not ruler_id.is_empty():
+            current_ruler_id = ruler_id
+
+        var updates: Dictionary = rule.get("character_updates", {}) as Dictionary
+        for character_key: Variant in updates.keys():
+            var character_id: String = str(character_key)
+            var current_state: Dictionary = character_state.get(character_id, {}) as Dictionary
+            var patch: Dictionary = updates[character_key] as Dictionary
+            for field: Variant in patch.keys():
+                current_state[field] = patch[field]
+            character_state[character_id] = current_state
+
+        history.append({
+            "year": year,
+            "season": season,
+            "era": current_era_id,
+            "event": str(rule.get("id", "critical_crisis")),
+            "choice": "crisis"
+        })
+        return str(rule.get("target_id", ""))
+
+    return ""
 
 func _resolve_next(next_value: Variant) -> String:
     if next_value is String:
@@ -1141,7 +1178,7 @@ func _clear_flag(flag_name: String) -> void:
 func _apply_stat_effects(effects: Dictionary, animated: bool = false) -> void:
     for key: Variant in effects.keys():
         if stats.has(key):
-            stats[key] = clampi(int(stats[key]) + int(effects[key]), 0, 100)
+            stats[key] = clampi(int(stats[key]) + int(effects[key]), 0, 10)
 
     _refresh_stats(animated)
 
@@ -1156,9 +1193,9 @@ func _effects_text(effects: Dictionary) -> String:
 
         var magnitude: int = absi(value)
         var arrows: String = "↑" if value > 0 else "↓"
-        if magnitude >= 6:
+        if magnitude >= 3:
             arrows = arrows + arrows + arrows
-        elif magnitude >= 3:
+        elif magnitude >= 2:
             arrows = arrows + arrows
 
         parts.append("%s %s" % [str(names.get(key, key)), arrows])
@@ -1201,7 +1238,7 @@ func _make_stat(parent: GridContainer, title_text: String, key: String, fill_col
 
     var bar: ProgressBar = ProgressBar.new()
     bar.min_value = 0
-    bar.max_value = 100
+    bar.max_value = 10
     bar.value = float(stats[key])
     bar.show_percentage = false
     bar.custom_minimum_size = Vector2(0, 13)
@@ -1220,35 +1257,35 @@ func _make_stat(parent: GridContainer, title_text: String, key: String, fill_col
     stat_states[key] = state
 
 func _resource_state(value: int) -> String:
-    if value < 20:
+    if value <= 1:
         return "Çöküşte"
-    if value < 40:
+    if value <= 3:
         return "Kırılgan"
-    if value < 65:
+    if value <= 6:
         return "Dengeli"
-    if value < 85:
+    if value <= 8:
         return "Güçlü"
     return "Çok güçlü"
 
 func _trust_state(value: int) -> String:
-    if value < 15:
+    if value <= 1:
         return "Seni düşman görüyor"
-    if value < 30:
+    if value <= 3:
         return "Senden şüpheleniyor"
-    if value < 50:
+    if value <= 4:
         return "Sana karşı temkinli"
-    if value < 70:
+    if value <= 6:
         return "Sana güveniyor"
-    if value < 90:
+    if value <= 8:
         return "Sözüne değer veriyor"
     return "En yakın sırdaşısın"
 
 func _trust_color(value: int) -> Color:
-    if value < 30:
+    if value <= 2:
         return Color("#d47777")
-    if value < 50:
+    if value <= 4:
         return Color("#d6aa70")
-    if value < 70:
+    if value <= 6:
         return GOLD_BRIGHT
     return Color("#8fd0a9")
 
