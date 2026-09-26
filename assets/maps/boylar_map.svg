@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 780">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+    <stop stop-color="#172230"/><stop offset="1" stop-color="#080d13"/>
+  </linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1080" height="780" fill="url(#bg)"/>
+<path d="M0 120L105 55l80 66 105-95 112 115 118-87 90 71 112-92 124 112 114-64 120 83v145H0z" fill="#25313c" opacity=".92"/>
+<path d="M0 185l122-54 87 51 125-72 127 82 134-67 118 72 120-58 127 73 120-42v126H0z" fill="#151f29"/>
+<path d="M66 320L360 250l182 80-80 270-320 26-100-166z" fill="#6b4c26" opacity=".62" stroke="#d69a42" stroke-width="5"/>
+<path d="M327 232l295-84 150 126-126 268-190 55-90-116z" fill="#234964" opacity=".64" stroke="#75b5d8" stroke-width="5"/>
+<path d="M690 225l264 10 80 185-97 173-251-51-58-238z" fill="#5a554c" opacity=".60" stroke="#b6a88d" stroke-width="5"/>
+<path d="M828 455l252-65v390H755l42-132z" fill="#682d31" opacity=".62" stroke="#c75555" stroke-width="5"/>
+<path d="M0 648l275-30 155 39 143-62 183 57 324-20v148H0z" fill="#111820"/>
+<g fill="none" stroke="#d5c29a" stroke-width="4" stroke-dasharray="12 10" opacity=".8">
+  <path d="M220 485C360 440 430 390 525 345S745 322 866 430"/>
+  <path d="M520 345C548 450 600 527 810 590"/>
+</g>
+<path d="M430 330c72 24 106 83 121 154 14 65 80 75 136 59" fill="none" stroke="#75a7c5" stroke-width="12" opacity=".85"/>
+<g font-family="serif" font-weight="700" text-anchor="middle" fill="#f1d38f">
+  <text x="220" y="430" font-size="52">BAYIR</text>
+  <text x="520" y="335" font-size="52">KAYI</text>
+  <text x="825" y="360" font-size="52">KARLUK</text>
+  <text x="920" y="555" font-size="44">DOĞU SINIRI</text>
+</g>
+<g stroke="#d4aa5d" stroke-width="5" fill="#10161d">
+  <path d="M195 390v-95"/><path d="M195 296l66 22-66 22z" fill="#c28b36"/>
+  <path d="M520 290v-112"/><path d="M520 180l74 25-74 25z" fill="#315d7d"/>
+  <path d="M820 315v-103"/><path d="M820 214l70 24-70 24z" fill="#70685b"/>
+  <path d="M934 520v-105"/><path d="M934 417l70 24-70 24z" fill="#8e343b"/>
+</g>
+<g fill="#d6aa58" opacity=".9">
+  <circle cx="260" cy="520" r="11"/><circle cx="410" cy="434" r="11"/><circle cx="620" cy="380" r="11"/><circle cx="770" cy="440" r="11"/><circle cx="842" cy="552" r="11"/>
+</g>
+<g fill="#0a1016" stroke="#d6aa58" stroke-width="3">
+  <path d="M465 388h105l-12-36-40-20-40 20z"/><rect x="479" y="388" width="77" height="35"/>
+  <path d="M157 527h92l-10-30-36-17-36 17z"/><rect x="169" y="527" width="68" height="31"/>
+  <path d="M775 408h88l-10-28-34-17-34 17z"/><rect x="786" y="408" width="66" height="30"/>
+</g>
+<g fill="#101820" stroke="#d6aa58" stroke-width="3">
+  <rect x="625" y="470" width="24" height="55"/><path d="M614 470h46l-8-20h-30z"/>
+  <rect x="877" y="555" width="24" height="62"/><path d="M866 555h46l-8-20h-30z"/>
+</g>
+</svg>
