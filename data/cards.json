@@ -60,27 +60,29 @@
   },
   {
     "id": "kara_yabgu_01",
-    "speaker": "BAYIR BEYİ",
-    "text": "Ulu Tarkan, Kara Yabgu'nun otağında son günlerde çok sayıda savaşçı toplandığı söyleniyor.",
+    "speaker": "KARA YABGU",
+    "text": "Ulu Tarkan, batıdaki boylar sınırı koruyor ama merkezin buyruğu her geçen gün ağırlaşıyor. Bana daha geniş yetki verilmesini Kağan'a sen söyle.",
     "left": {
-      "text": "Kağan'a hemen söyle.",
+      "text": "Talebini Kağan'a ileteceğim.",
       "effects": {
-        "guven": 4,
+        "guven": -2,
+        "ordu": 3,
         "kut": -2
       }
     },
     "right": {
-      "text": "Önce kendimiz araştıralım.",
+      "text": "Yetki töreden üstündür sanma.",
       "effects": {
-        "guven": -2,
-        "hazine": -1
+        "guven": 2,
+        "ordu": -2,
+        "kut": 3
       }
     }
   },
   {
-    "id": "winter_01",
-    "speaker": "ULAK",
-    "text": "Tarkan! Kuzeydeki sürülerin bir kısmı soğuktan telef oldu. Halk erzak bekliyor.",
+    "id": "ak_boru_winter_01",
+    "speaker": "AK BÖRÜ",
+    "text": "Kuzey rüzgârı erken indi, Tarkan. Sürüler kırılıyor. Halkın ambarı açılmazsa bu kış yalnız hayvanları değil, sadakati de alır götürür.",
     "left": {
       "text": "Hazineyi açın. Halk aç kalmasın.",
       "effects": {
@@ -90,7 +92,7 @@
       }
     },
     "right": {
-      "text": "Boylar kendi sürülerini korumalıydı.",
+      "text": "Boylar kendi kışlığını hazırlamalıydı.",
       "effects": {
         "halk": -8,
         "kut": -3
