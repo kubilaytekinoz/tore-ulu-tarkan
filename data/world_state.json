@@ -6,12 +6,14 @@
   "current_ruler": "boru_kagan",
   "player": {
     "title": "Ulu Tarkan",
-    "birth_year": 642
+    "birth_year": 642,
+    "office": "Ulu Tarkan",
+    "office_continues_across_generations": true
   },
   "stats": {
     "kut": 6,
     "halk": 6,
-    "ordu": 7,
+    "ordu": 6,
     "hazine": 5,
     "guven": 6
   },
@@ -84,6 +86,9 @@
       "major": "3",
       "critical_zone": "0–1",
       "note": "Her puan önemlidir. Büyük kazançlar başka bir kaynak, siyasi ilişki veya gelecek riskle dengelenir."
-    }
+    },
+    "v3_chronicle": true,
+    "authored_end_year": 934,
+    "endless_after": 934
   }
 }
