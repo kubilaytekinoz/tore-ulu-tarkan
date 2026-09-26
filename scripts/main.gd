@@ -16,6 +16,22 @@ const HALK_FILL: Color = Color("#79c7a0")
 const ORDU_FILL: Color = Color("#c96d69")
 const HAZINE_FILL: Color = Color("#7aa8be")
 
+const CHARACTER_PORTRAITS: Dictionary = {
+    "BÖRÜ KAĞAN": "res://assets/characters/boru_kagan_main.webp",
+    "ALTUN HATUN": "res://assets/characters/altun_hatun_main.webp",
+    "ALP ŞAD": "res://assets/characters/alp_shad_main.webp",
+    "KARA YABGU": "res://assets/characters/kara_yabgu_main.webp",
+    "AK BÖRÜ": "res://assets/characters/ak_boru_main.webp"
+}
+
+const CHARACTER_DESCRIPTIONS: Dictionary = {
+    "BÖRÜ KAĞAN": "Kağan  •  Töre'nin sahibi",
+    "ALTUN HATUN": "Hatun  •  Sarayın güçlü sesi",
+    "ALP ŞAD": "Şad  •  Sınır ordularının kumandanı",
+    "KARA YABGU": "Yabgu  •  Batı kanadının kudretli beyi",
+    "AK BÖRÜ": "Kam  •  Bozkırın bilgesi"
+}
+
 var stats: Dictionary = {"kut":61, "halk":54, "ordu":67, "hazine":46, "guven":58}
 var year: int = 682
 var season: String = "Sonbahar"
@@ -33,6 +49,9 @@ var card_text: Label
 var feedback_label: Label
 var left_button: Button
 var right_button: Button
+var portrait: TextureRect
+var ruler_name: Label
+var ruler_desc: Label
 
 func _ready() -> void:
     _build_background()
@@ -152,7 +171,7 @@ func _build_menu() -> void:
     col.add_child(settings_btn)
 
     var version: Label = Label.new()
-    version.text = "PROTOTİP  •  v0.7"
+    version.text = "PROTOTİP  •  v0.8"
     version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     version.add_theme_font_size_override("font_size", 18)
     version.add_theme_color_override("font_color", Color("#687483"))
@@ -297,7 +316,7 @@ func _build_game() -> void:
     portrait_stack.custom_minimum_size = Vector2(0, 640)
     portrait_panel.add_child(portrait_stack)
 
-    var portrait: TextureRect = TextureRect.new()
+    portrait = TextureRect.new()
     portrait.texture = load("res://assets/characters/boru_kagan_main.webp") as Texture2D
     portrait.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -320,15 +339,15 @@ func _build_game() -> void:
     name_box.add_theme_constant_override("separation", 2)
     portrait_stack.add_child(name_box)
 
-    var ruler_name: Label = Label.new()
+    ruler_name = Label.new()
     ruler_name.text = "BÖRÜ KAĞAN"
     ruler_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     ruler_name.add_theme_font_size_override("font_size", 32)
     ruler_name.add_theme_color_override("font_color", GOLD_BRIGHT)
     name_box.add_child(ruler_name)
 
-    var ruler_desc: Label = Label.new()
-    ruler_desc.text = "Yeni tahta çıktı  •  33 yaşında"
+    ruler_desc = Label.new()
+    ruler_desc.text = "Kağan  •  Töre'nin sahibi"
     ruler_desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     ruler_desc.add_theme_font_size_override("font_size", 18)
     ruler_desc.add_theme_color_override("font_color", MUTED)
@@ -435,12 +454,23 @@ func _show_card() -> void:
     var left_data: Dictionary = card["left"] as Dictionary
     var right_data: Dictionary = card["right"] as Dictionary
 
-    speaker_label.text = str(card.get("speaker", ""))
+    var speaker: String = str(card.get("speaker", "BÖRÜ KAĞAN"))
+    speaker_label.text = speaker
+    _set_character(speaker)
     card_text.text = "“" + str(card.get("text", "")) + "”"
     left_button.text = "←  " + str(left_data.get("text", ""))
     right_button.text = str(right_data.get("text", "")) + "  →"
     feedback_label.text = "Kararını ver, Ulu Tarkan."
     _refresh_year()
+
+func _set_character(character_name: String) -> void:
+    var portrait_path: String = str(CHARACTER_PORTRAITS.get(character_name, CHARACTER_PORTRAITS["BÖRÜ KAĞAN"]))
+    var texture: Texture2D = load(portrait_path) as Texture2D
+    if texture != null:
+        portrait.texture = texture
+
+    ruler_name.text = character_name
+    ruler_desc.text = str(CHARACTER_DESCRIPTIONS.get(character_name, "Bozkırın konuğu"))
 
 func _choose(side: String) -> void:
     if cards.is_empty():
