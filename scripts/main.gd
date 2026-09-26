@@ -22,6 +22,8 @@ const WORLD_STATE_PATH: String = "res://data/world_state.json"
 const SCENARIO_INDEX_PATH: String = "res://data/scenarios/index.json"
 const RANDOM_EVENTS_PATH: String = "res://data/events/random_events.json"
 const CRISIS_EVENTS_PATH: String = "res://data/events/crisis_events.json"
+const CARDS_PATH: String = "res://data/cards.json"
+const OUTCOME_POOLS_PATH: String = "res://data/outcome_pools.json"
 
 var stats: Dictionary = {"kut":6, "halk":6, "ordu":7, "hazine":5, "guven":6}
 var year: int = 682
@@ -47,6 +49,12 @@ var input_locked: bool = false
 var event_overlay_active: bool = false
 var event_queue: Array[Dictionary] = []
 var presented_important: Array[String] = []
+var v3_mode: bool = false
+var outcome_pools: Dictionary = {}
+var relationships: Dictionary = {}
+var seen_cards: Dictionary = {}
+var last_card_year: Dictionary = {}
+var pending_game_over: bool = false
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var story_state: Dictionary = {
     "boy_anger": 0,
@@ -696,6 +704,9 @@ func _dismiss_event_overlay() -> void:
 
     if not event_queue.is_empty():
         _play_next_event()
+    elif pending_game_over:
+        pending_game_over = false
+        _show_menu()
     else:
         input_locked = false
         _set_choice_buttons_enabled(true)
@@ -838,8 +849,23 @@ func _load_game_data() -> void:
     var crisis_doc: Dictionary = _load_json_dict(CRISIS_EVENTS_PATH)
     crisis_rules = crisis_doc.get("crises", []) as Array
 
-    current_era_id = str(world_defaults.get("start_era", scenario_index.get("start_era", "boru_era")))
-    _load_scenario(current_era_id)
+    var cards_doc: Dictionary = _load_json_dict(CARDS_PATH)
+    v3_mode = int(cards_doc.get("schema_version", 0)) >= 3 or str(cards_doc.get("mode", "")) == "chronicle_scheduler"
+    if v3_mode:
+        cards = cards_doc.get("cards", []) as Array
+        scenario_start = str(cards_doc.get("start_id", "boru_001"))
+        card_lookup.clear()
+        for item: Variant in cards:
+            var card: Dictionary = item as Dictionary
+            card_lookup[str(card.get("id", ""))] = card
+        outcome_pools = _load_json_dict(OUTCOME_POOLS_PATH)
+        if not cards.is_empty():
+            current_era_id = str((cards[0] as Dictionary).get("era", "boru_kagan"))
+        else:
+            current_era_id = "boru_kagan"
+    else:
+        current_era_id = str(world_defaults.get("start_era", scenario_index.get("start_era", "boru_era")))
+        _load_scenario(current_era_id)
 
 func _load_json_dict(path: String) -> Dictionary:
     var file: FileAccess = FileAccess.open(path, FileAccess.READ)
@@ -900,11 +926,18 @@ func _start_game() -> void:
     presented_important.clear()
     input_locked = false
     event_overlay_active = false
-    current_era_id = str(world_defaults.get("start_era", scenario_index.get("start_era", "boru_era")))
-    _load_scenario(current_era_id)
+    relationships.clear()
+    seen_cards.clear()
+    last_card_year.clear()
+    pending_game_over = false
+    if v3_mode:
+        current_era_id = "boru_kagan"
+    else:
+        current_era_id = str(world_defaults.get("start_era", scenario_index.get("start_era", "boru_era")))
+        _load_scenario(current_era_id)
 
     year = int(world_defaults.get("start_year", 682))
-    season = str(world_defaults.get("start_season", "Sonbahar"))
+    season = "" if v3_mode else str(world_defaults.get("start_season", "Sonbahar"))
     turn_no = 0
     last_world_event_turn = -999
     current_card_id = scenario_start
@@ -928,10 +961,13 @@ func _show_card() -> void:
     var left_data: Dictionary = card.get("left", {}) as Dictionary
     var right_data: Dictionary = card.get("right", {}) as Dictionary
 
-    if card.has("year"):
-        year = int(card["year"])
-    if card.has("season"):
-        season = str(card["season"])
+    if v3_mode:
+        current_era_id = str(card.get("era", current_era_id))
+    else:
+        if card.has("year"):
+            year = int(card["year"])
+        if card.has("season"):
+            season = str(card["season"])
 
     var speaker_id: String = str(card.get("speaker_id", current_ruler_id))
     var character: Dictionary = characters.get(speaker_id, {}) as Dictionary
@@ -951,7 +987,7 @@ func _show_card() -> void:
 
     _refresh_year()
     var presentation: Dictionary = card.get("presentation", {}) as Dictionary
-    if presentation.is_empty():
+    if presentation.is_empty() and not v3_mode:
         _queue_time_and_world_events(previous_year, previous_season)
     _queue_important_card(card)
 
@@ -1011,6 +1047,15 @@ func _choose(side: String) -> void:
     for flag_value: Variant in clear_flags:
         _clear_flag(str(flag_value))
 
+    var relation_effects: Dictionary = choice.get("relations", {}) as Dictionary
+    for relation_key: Variant in relation_effects.keys():
+        var relation_id: String = str(relation_key)
+        relationships[relation_id] = int(relationships.get(relation_id, 0)) + int(relation_effects[relation_key])
+
+    var outcome_pool_id: String = str(choice.get("outcome_pool", ""))
+    if v3_mode and not outcome_pool_id.is_empty():
+        _apply_v3_outcome(outcome_pool_id)
+
     var history_entry: Dictionary = {
         "year": year,
         "season": season,
@@ -1023,11 +1068,28 @@ func _choose(side: String) -> void:
     feedback_label.text = _effects_text(effects)
     turn_no += 1
 
-    var next_id: String = _resolve_critical_crisis()
-    if next_id.is_empty():
-        next_id = _resolve_next(choice.get("next", ""))
-    if next_id.is_empty():
-        next_id = _resolve_next(card.get("next", ""))
+    if bool(choice.get("game_over", false)):
+        pending_game_over = true
+        _queue_event({
+            "kicker": "TARKAN OCAĞI",
+            "title": "BİR DEVRİN SONU",
+            "text": str(card.get("text", "Ulu Tarkan'ın yolu burada sona erdi.")),
+            "effects_text": _effects_text(effects),
+            "tone": "danger"
+        })
+        _play_next_event()
+        return
+
+    var next_id: String = ""
+    if v3_mode:
+        _mark_v3_card_seen(current_card_id)
+        next_id = _select_next_v3_card()
+    else:
+        next_id = _resolve_critical_crisis()
+        if next_id.is_empty():
+            next_id = _resolve_next(choice.get("next", ""))
+        if next_id.is_empty():
+            next_id = _resolve_next(card.get("next", ""))
 
     await _animate_card_out()
     current_card_id = next_id
@@ -1039,6 +1101,187 @@ func _choose(side: String) -> void:
     else:
         input_locked = false
         _set_choice_buttons_enabled(true)
+
+func _mark_v3_card_seen(card_id: String) -> void:
+    if card_id.is_empty():
+        return
+    seen_cards[card_id] = int(seen_cards.get(card_id, 0)) + 1
+    last_card_year[card_id] = year
+
+func _v3_condition_token_matches(token: String) -> bool:
+    if token.is_empty() or token == "normal":
+        return true
+    if token.begins_with("flag:"):
+        return flags.has(token.substr(5))
+    var source: Dictionary = stats
+    var expr: String = token
+    if token.begins_with("stat:"):
+        expr = token.substr(5)
+        source = stats
+    elif token.begins_with("rel:"):
+        expr = token.substr(4)
+        source = relationships
+    else:
+        return true
+
+    var operators: Array[String] = [">=", "<=", "==", ">", "<"]
+    for op: String in operators:
+        var pos: int = expr.find(op)
+        if pos < 0:
+            continue
+        var key: String = expr.substr(0, pos)
+        if key == "kagan_guveni":
+            key = "guven"
+        var rhs: int = int(expr.substr(pos + op.length()))
+        var lhs: int = int(source.get(key, 0))
+        match op:
+            ">=":
+                return lhs >= rhs
+            "<=":
+                return lhs <= rhs
+            "==":
+                return lhs == rhs
+            ">":
+                return lhs > rhs
+            "<":
+                return lhs < rhs
+    return false
+
+func _v3_card_conditions_match(card: Dictionary) -> bool:
+    var required: Array = card.get("requires", []) as Array
+    for token_value: Variant in required:
+        if not _v3_condition_token_matches(str(token_value)):
+            return false
+
+    var any_required: Array = card.get("requires_any", []) as Array
+    if not any_required.is_empty():
+        var any_ok: bool = false
+        for token_value: Variant in any_required:
+            if _v3_condition_token_matches(str(token_value)):
+                any_ok = true
+                break
+        if not any_ok:
+            return false
+    return true
+
+func _v3_card_available(card: Dictionary, candidate_year: int) -> bool:
+    var card_id: String = str(card.get("id", ""))
+    if card_id.is_empty() or card_id == current_card_id:
+        return false
+    if candidate_year < int(card.get("year_min", card.get("year", candidate_year))):
+        return false
+    if candidate_year > int(card.get("year_max", card.get("year", candidate_year))):
+        return false
+    if bool(card.get("once", true)) and int(seen_cards.get(card_id, 0)) > 0:
+        return false
+    var cooldown: int = int(card.get("cooldown_years", 0))
+    if cooldown > 0 and last_card_year.has(card_id):
+        if candidate_year - int(last_card_year[card_id]) < cooldown:
+            return false
+    return _v3_card_conditions_match(card)
+
+func _select_weighted_v3(candidates: Array) -> String:
+    var total: float = 0.0
+    var weights: Array[float] = []
+    for item: Variant in candidates:
+        var card: Dictionary = item as Dictionary
+        var w: float = maxf(float(card.get("weight", 100)), 1.0)
+        var priority: String = str(card.get("priority", ""))
+        if priority == "critical":
+            w *= 8.0
+        elif priority == "high":
+            w *= 4.0
+        var card_type: String = str(card.get("type", ""))
+        if card_type in ["story", "callback", "transition", "branch"]:
+            w *= 2.0
+        elif card_type == "ambient":
+            w *= 0.75
+        var anchor: int = int(card.get("year", year))
+        w /= 1.0 + 0.30 * absf(float(anchor - year))
+        weights.append(w)
+        total += w
+
+    if total <= 0.0:
+        return str((candidates[0] as Dictionary).get("id", ""))
+
+    var roll: float = rng.randf() * total
+    for i: int in range(candidates.size()):
+        roll -= weights[i]
+        if roll <= 0.0:
+            return str((candidates[i] as Dictionary).get("id", ""))
+    return str((candidates.back() as Dictionary).get("id", ""))
+
+func _select_next_v3_card() -> String:
+    var max_search: int = 28 if year >= 934 else 8
+    for offset: int in range(max_search + 1):
+        var candidate_year: int = year + offset
+        var candidates: Array = []
+        var urgent: bool = false
+        for item: Variant in cards:
+            var card: Dictionary = item as Dictionary
+            if not _v3_card_available(card, candidate_year):
+                continue
+            candidates.append(card)
+            var p: String = str(card.get("priority", ""))
+            if p == "critical" or p == "high":
+                urgent = true
+
+        if candidates.is_empty():
+            continue
+
+        if offset == 0 and not urgent and year < 934 and rng.randf() > 0.52:
+            continue
+
+        year = candidate_year
+        season = ""
+        return _select_weighted_v3(candidates)
+
+    return ""
+
+func _apply_v3_outcome(pool_id: String) -> void:
+    var pool: Dictionary = outcome_pools.get(pool_id, {}) as Dictionary
+    if pool.is_empty():
+        return
+    var base: Dictionary = (pool.get("base", {}) as Dictionary).duplicate(true)
+    var modifiers: Array = pool.get("modifiers", []) as Array
+    for modifier_value: Variant in modifiers:
+        var modifier: Dictionary = modifier_value as Dictionary
+        if not _v3_condition_token_matches(str(modifier.get("if", ""))):
+            continue
+        for key: Variant in modifier.keys():
+            if str(key) == "if":
+                continue
+            base[key] = maxf(float(base.get(key, 0)) + float(modifier[key]), 0.0)
+
+    var total: float = 0.0
+    for key: Variant in base.keys():
+        total += maxf(float(base[key]), 0.0)
+    if total <= 0.0:
+        return
+
+    var roll: float = rng.randf() * total
+    var selected: String = ""
+    for key: Variant in base.keys():
+        roll -= maxf(float(base[key]), 0.0)
+        if roll <= 0.0:
+            selected = str(key)
+            break
+    if selected.is_empty():
+        selected = str(base.keys().back())
+
+    var results: Dictionary = pool.get("results", {}) as Dictionary
+    var result: Dictionary = results.get(selected, {}) as Dictionary
+    var result_effects: Dictionary = {}
+    for stat_key: String in ["kut", "halk", "ordu", "hazine", "kagan_guveni"]:
+        if not result.has(stat_key):
+            continue
+        var engine_key: String = "guven" if stat_key == "kagan_guveni" else stat_key
+        result_effects[engine_key] = int(result[stat_key])
+    _apply_stat_effects(result_effects, true)
+
+    var result_flags: Array = result.get("set", []) as Array
+    for flag_value: Variant in result_flags:
+        _set_flag(str(flag_value))
 
 func _resolve_critical_crisis() -> String:
     for rule_variant: Variant in crisis_rules:
@@ -1220,7 +1463,10 @@ func _refresh_stats(animated: bool = false) -> void:
     trust_label.add_theme_color_override("font_color", _trust_color(int(stats["guven"])))
 
 func _refresh_year() -> void:
-    year_label.text = "%d  •  %s" % [year, season]
+    if v3_mode or season.is_empty():
+        year_label.text = "%d" % year
+    else:
+        year_label.text = "%d  •  %s" % [year, season]
 
 func _make_stat(parent: GridContainer, title_text: String, key: String, fill_color: Color) -> void:
     var box: VBoxContainer = VBoxContainer.new()
