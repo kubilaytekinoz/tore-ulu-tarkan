@@ -1028,7 +1028,6 @@ func _choose(side: String) -> void:
     history.append(history_entry)
 
     feedback_label.text = _effects_text(effects)
-    _refresh_stats()
     turn_no += 1
 
     var next_id: String = _resolve_next(choice.get("next", ""))
