@@ -250,7 +250,13 @@
           "kara_letter_investigated_683"
         ]
       },
-      "speaker_id": "boru_kagan"
+      "speaker_id": "boru_kagan",
+      "presentation": {
+        "kicker": "SARAYDA ŞÜPHE",
+        "title": "MÜHÜRLÜ MEKTUP",
+        "text": "Bir deri parçası artık söylenti değil. Kara Yabgu'nun mührüyle yazılmış mektup Kağan'ın önüne kondu.",
+        "tone": "danger"
+      }
     },
     {
       "id": "alp_accused_01",
@@ -395,7 +401,13 @@
           "toy_stopped_for_poison_683"
         ]
       },
-      "speaker_id": "ak_boru"
+      "speaker_id": "ak_boru",
+      "presentation": {
+        "kicker": "TOY GECESİ",
+        "title": "KADEHTE BİR KOKU",
+        "text": "Müzik sürerken otağın içindeki hava değişti. Kağan'ın kadehine kimsenin dokunmaması gerekiyor.",
+        "tone": "danger"
+      }
     },
     {
       "id": "poison_stopped_01",
@@ -469,7 +481,13 @@
           "kara_regency_684"
         ]
       },
-      "speaker_id": "altun_hatun"
+      "speaker_id": "altun_hatun",
+      "presentation": {
+        "kicker": "OTAĞIN KAPILARI KAPANDI",
+        "title": "KAĞAN ZEHİRLENDİ",
+        "text": "Şimdi mesele kimin suçlu olduğu değil; Kağan yaşarken devletin dağılmasını önlemek.",
+        "tone": "danger"
+      }
     },
     {
       "id": "kara_return_01",
@@ -595,7 +613,13 @@
           }
         ]
       },
-      "speaker_id": "alp_shad"
+      "speaker_id": "alp_shad",
+      "presentation": {
+        "kicker": "BATIDAN DUMAN YÜKSELİYOR",
+        "title": "SANCAKLAR KALKTI",
+        "text": "Vergi kavgası artık bir şikâyet değil. Üç oba açıkça merkezin buyruğuna karşı çıktı.",
+        "tone": "danger"
+      }
     },
     {
       "id": "alp_betrayal_01",
@@ -625,7 +649,13 @@
         },
         "next": "battle_climax_01"
       },
-      "speaker_id": "alp_shad"
+      "speaker_id": "alp_shad",
+      "presentation": {
+        "kicker": "ORDUDA ÇATLAK",
+        "title": "ALP ŞAD EMİR DİNLEMİYOR",
+        "text": "Yıllar önce verdiğin kararlar bugün kılıç kuşanan askerlerin hangi tarafta duracağını belirliyor.",
+        "tone": "danger"
+      }
     },
     {
       "id": "kara_rebellion_01",
@@ -656,7 +686,13 @@
         },
         "next": "battle_climax_01"
       },
-      "speaker_id": "kara_yabgu"
+      "speaker_id": "kara_yabgu",
+      "presentation": {
+        "kicker": "BATI KANADI",
+        "title": "KARA YABGU SANCAĞINI AÇTI",
+        "text": "Artık pazarlık ile isyan arasındaki çizgi kalmadı. Batının yarısı onun sözünü dinliyor.",
+        "tone": "danger"
+      }
     },
     {
       "id": "kara_choice_01",
@@ -738,14 +774,23 @@
         "next": [
           {
             "when": {
-              "all": [
+              "any": [
                 {
-                  "key": "kara_power",
-                  "gte": 5
+                  "all": [
+                    {
+                      "key": "kara_power",
+                      "gte": 5
+                    },
+                    {
+                      "key": "kara_anger",
+                      "gte": 3
+                    }
+                  ]
                 },
                 {
-                  "key": "kara_anger",
-                  "gte": 3
+                  "source": "stats",
+                  "key": "kut",
+                  "lte": 32
                 }
               ]
             },
@@ -766,7 +811,13 @@
           "boru_kept_at_capital"
         ]
       },
-      "speaker_id": "boru_kagan"
+      "speaker_id": "boru_kagan",
+      "presentation": {
+        "kicker": "684  •  SONBAHAR",
+        "title": "KAĞAN ZIRHINI GİYDİ",
+        "text": "Bütün küçük kararlar bu ana bağlandı. Kağan ordunun önünde mi yürüyecek, yoksa merkezde mi kalacak?",
+        "tone": "danger"
+      }
     },
     {
       "id": "kagan_falls_01",
@@ -781,7 +832,13 @@
       },
       "ending": true,
       "ending_title": "SON: KAĞAN DÜŞTÜ — VERASET KRİZİ BAŞLADI",
-      "speaker_id": "altun_hatun"
+      "speaker_id": "altun_hatun",
+      "presentation": {
+        "kicker": "BİR DEVİR KAPANIYOR",
+        "title": "BÖRÜ KAĞAN DÜŞTÜ",
+        "text": "Savaş kazanıldı. Fakat bozkıra dönen sancakların arasında Kağan'ın atı boş geliyor.",
+        "tone": "danger"
+      }
     },
     {
       "id": "kagan_survives_final_01",
@@ -796,7 +853,13 @@
       },
       "ending": true,
       "ending_title": "SON: İSYAN BİTTİ — AMA GERÇEK HAİN BULUNAMADI",
-      "speaker_id": "boru_kagan"
+      "speaker_id": "boru_kagan",
+      "presentation": {
+        "kicker": "DÖNEMİN SONU",
+        "title": "KAĞAN GERİ DÖNDÜ",
+        "text": "İsyan dağıldı ama saraydaki ihanetin kökü sökülmedi. Zafer, huzur getirmedi.",
+        "tone": "neutral"
+      }
     },
     {
       "id": "kara_takes_capital_01",
@@ -811,7 +874,13 @@
       },
       "ending": true,
       "ending_title": "SON: TAHT DURUYOR — İKTİDAR EL DEĞİŞTİRDİ",
-      "speaker_id": "kara_yabgu"
+      "speaker_id": "kara_yabgu",
+      "presentation": {
+        "kicker": "DÖNEMİN SONU",
+        "title": "TAHT DURUYOR, GÜÇ DEĞİŞTİ",
+        "text": "Kağan hâlâ otağında; fakat başkentin kapılarının kime açıldığı herkes tarafından görüldü.",
+        "tone": "danger"
+      }
     },
     {
       "id": "arslan_rises_01",
@@ -826,7 +895,13 @@
       },
       "ending": true,
       "ending_title": "SON: ARSLAN TEGİN YÜKSELİYOR",
-      "speaker_id": "altun_hatun"
+      "speaker_id": "altun_hatun",
+      "presentation": {
+        "kicker": "YENİ BİR GÖLGE",
+        "title": "ARSLAN TEGİN YÜKSELİYOR",
+        "text": "Taht boş değil. Yine de boyların bakışı artık yalnız Börü Kağan'a dönmüyor.",
+        "tone": "neutral"
+      }
     },
     {
       "id": "cold_peace_01",
@@ -841,7 +916,13 @@
       },
       "ending": true,
       "ending_title": "SON: SOĞUK BARIŞ",
-      "speaker_id": "ak_boru"
+      "speaker_id": "ak_boru",
+      "presentation": {
+        "kicker": "DÖNEMİN SONU",
+        "title": "SOĞUK BARIŞ",
+        "text": "Kılıçlar kında. Hiç kimse yenilmedi; hiç kimse de gerçekten barışmadı.",
+        "tone": "neutral"
+      }
     }
   ]
 }

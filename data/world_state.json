@@ -73,5 +73,14 @@
     }
   },
   "flags": [],
-  "history": []
+  "history": [],
+  "simulation": {
+    "season_event_chance": 0.68,
+    "score_rules": {
+      "minor": "1–2",
+      "meaningful": "3–5",
+      "major": "6+",
+      "note": "Büyük görünür kazançlar mümkün olduğunca başka bir kaynak, gizli ilişki veya gelecek olay riskiyle dengelenir."
+    }
+  }
 }

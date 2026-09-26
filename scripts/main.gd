@@ -20,6 +20,7 @@ const CHARACTERS_PATH: String = "res://data/characters.json"
 const DYNASTIES_PATH: String = "res://data/dynasties.json"
 const WORLD_STATE_PATH: String = "res://data/world_state.json"
 const SCENARIO_INDEX_PATH: String = "res://data/scenarios/index.json"
+const RANDOM_EVENTS_PATH: String = "res://data/events/random_events.json"
 
 var stats: Dictionary = {"kut":61, "halk":54, "ordu":67, "hazine":46, "guven":58}
 var year: int = 682
@@ -30,6 +31,7 @@ var characters: Dictionary = {}
 var dynasties: Dictionary = {}
 var world_defaults: Dictionary = {}
 var scenario_index: Dictionary = {}
+var random_events: Array = []
 var character_state: Dictionary = {}
 var flags: Array[String] = []
 var history: Array[Dictionary] = []
@@ -38,6 +40,11 @@ var current_ruler_id: String = ""
 var scenario_start: String = ""
 var current_card_id: String = ""
 var turn_no: int = 0
+var input_locked: bool = false
+var event_overlay_active: bool = false
+var event_queue: Array[Dictionary] = []
+var presented_important: Array[String] = []
+var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var story_state: Dictionary = {
     "boy_anger": 0,
     "kara_power": 0,
@@ -60,6 +67,8 @@ var card_text: Label
 var feedback_label: Label
 var left_button: Button
 var right_button: Button
+var card_panel: PanelContainer
+var choices_container: HBoxContainer
 var portrait: TextureRect
 var ruler_name: Label
 var ruler_desc: Label
@@ -67,8 +76,15 @@ var intro_overlay: Control
 var intro_title: Label
 var intro_text: Label
 var intro_button: Button
+var event_overlay: Control
+var event_kicker_label: Label
+var event_title_label: Label
+var event_body_label: Label
+var event_effects_label: Label
+var event_button: Button
 
 func _ready() -> void:
+    rng.randomize()
     _build_background()
     _build_menu()
     _build_game()
@@ -186,7 +202,7 @@ func _build_menu() -> void:
     col.add_child(settings_btn)
 
     var version: Label = Label.new()
-    version.text = "PROTOTİP  •  v1.1"
+    version.text = "PROTOTİP  •  v1.2"
     version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     version.add_theme_font_size_override("font_size", 18)
     version.add_theme_color_override("font_color", Color("#687483"))
@@ -368,17 +384,17 @@ func _build_game() -> void:
     ruler_desc.add_theme_color_override("font_color", MUTED)
     name_box.add_child(ruler_desc)
 
-    var card: PanelContainer = PanelContainer.new()
-    card.custom_minimum_size = Vector2(0, 328)
-    card.add_theme_stylebox_override("panel", _panel_style(Color("#081019f6"), GOLD_DARK, 2, 16))
-    col.add_child(card)
+    card_panel = PanelContainer.new()
+    card_panel.custom_minimum_size = Vector2(0, 328)
+    card_panel.add_theme_stylebox_override("panel", _panel_style(Color("#081019f6"), GOLD_DARK, 2, 16))
+    col.add_child(card_panel)
 
     var card_pad: MarginContainer = MarginContainer.new()
     card_pad.add_theme_constant_override("margin_left", 28)
     card_pad.add_theme_constant_override("margin_right", 28)
     card_pad.add_theme_constant_override("margin_top", 22)
     card_pad.add_theme_constant_override("margin_bottom", 20)
-    card.add_child(card_pad)
+    card_panel.add_child(card_pad)
 
     var card_col: VBoxContainer = VBoxContainer.new()
     card_col.add_theme_constant_override("separation", 12)
@@ -407,10 +423,10 @@ func _build_game() -> void:
     feedback_label.add_theme_color_override("font_color", MUTED)
     card_col.add_child(feedback_label)
 
-    var choices: HBoxContainer = HBoxContainer.new()
-    choices.custom_minimum_size = Vector2(0, 126)
-    choices.add_theme_constant_override("separation", 12)
-    col.add_child(choices)
+    choices_container = HBoxContainer.new()
+    choices_container.custom_minimum_size = Vector2(0, 126)
+    choices_container.add_theme_constant_override("separation", 12)
+    col.add_child(choices_container)
 
     left_button = Button.new()
     left_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -418,7 +434,7 @@ func _build_game() -> void:
     left_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     _style_button(left_button, GREEN, TEXT, Color("#9f8050"))
     left_button.pressed.connect(func() -> void: _choose("left"))
-    choices.add_child(left_button)
+    choices_container.add_child(left_button)
 
     right_button = Button.new()
     right_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -426,9 +442,10 @@ func _build_game() -> void:
     right_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     _style_button(right_button, RED, TEXT, Color("#9f8050"))
     right_button.pressed.connect(func() -> void: _choose("right"))
-    choices.add_child(right_button)
+    choices_container.add_child(right_button)
 
     _build_intro()
+    _build_event_overlay()
 
 func _build_intro() -> void:
     intro_overlay = Control.new()
@@ -539,6 +556,286 @@ func _dismiss_intro() -> void:
     intro_overlay.visible = false
     intro_button.disabled = false
 
+func _build_event_overlay() -> void:
+    event_overlay = Control.new()
+    event_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    event_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+    event_overlay.z_index = 120
+    event_overlay.visible = false
+    game_layer.add_child(event_overlay)
+
+    var shade: ColorRect = ColorRect.new()
+    shade.color = Color(0.005, 0.008, 0.012, 0.92)
+    shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    shade.mouse_filter = Control.MOUSE_FILTER_STOP
+    event_overlay.add_child(shade)
+
+    var center: CenterContainer = CenterContainer.new()
+    center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    event_overlay.add_child(center)
+
+    var panel: PanelContainer = PanelContainer.new()
+    panel.custom_minimum_size = Vector2(850, 650)
+    panel.add_theme_stylebox_override("panel", _panel_style(Color("#081019f5"), GOLD, 2, 24))
+    center.add_child(panel)
+
+    var pad: MarginContainer = MarginContainer.new()
+    pad.add_theme_constant_override("margin_left", 62)
+    pad.add_theme_constant_override("margin_right", 62)
+    pad.add_theme_constant_override("margin_top", 54)
+    pad.add_theme_constant_override("margin_bottom", 50)
+    panel.add_child(pad)
+
+    var col: VBoxContainer = VBoxContainer.new()
+    col.alignment = BoxContainer.ALIGNMENT_CENTER
+    col.add_theme_constant_override("separation", 22)
+    pad.add_child(col)
+
+    event_kicker_label = Label.new()
+    event_kicker_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    event_kicker_label.add_theme_font_size_override("font_size", 19)
+    event_kicker_label.add_theme_color_override("font_color", GOLD)
+    col.add_child(event_kicker_label)
+
+    event_title_label = Label.new()
+    event_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    event_title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    event_title_label.add_theme_font_size_override("font_size", 46)
+    event_title_label.add_theme_color_override("font_color", GOLD_BRIGHT)
+    col.add_child(event_title_label)
+
+    var divider: HSeparator = HSeparator.new()
+    divider.add_theme_color_override("separator", Color("#72572f"))
+    col.add_child(divider)
+
+    event_body_label = Label.new()
+    event_body_label.custom_minimum_size = Vector2(700, 280)
+    event_body_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    event_body_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    event_body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    event_body_label.add_theme_font_size_override("font_size", 27)
+    event_body_label.add_theme_color_override("font_color", TEXT)
+    col.add_child(event_body_label)
+
+    event_effects_label = Label.new()
+    event_effects_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    event_effects_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    event_effects_label.add_theme_font_size_override("font_size", 21)
+    event_effects_label.add_theme_color_override("font_color", MUTED)
+    col.add_child(event_effects_label)
+
+    event_button = Button.new()
+    event_button.text = "DEVAM ET"
+    event_button.custom_minimum_size = Vector2(0, 96)
+    event_button.add_theme_font_size_override("font_size", 24)
+    _style_button(event_button, Color("#15382e"), GOLD_BRIGHT, GOLD)
+    event_button.pressed.connect(_dismiss_event_overlay)
+    col.add_child(event_button)
+
+func _queue_event(data: Dictionary) -> void:
+    event_queue.append(data)
+
+func _play_next_event() -> void:
+    if event_overlay_active:
+        return
+
+    if event_queue.is_empty():
+        input_locked = false
+        _set_choice_buttons_enabled(true)
+        return
+
+    input_locked = true
+    _set_choice_buttons_enabled(false)
+    event_overlay_active = true
+    var data: Dictionary = event_queue.pop_front()
+
+    event_kicker_label.text = str(data.get("kicker", "BOZKIRDAN HABER"))
+    event_title_label.text = str(data.get("title", "BİR ŞEYLER DEĞİŞİYOR"))
+    event_body_label.text = str(data.get("text", ""))
+    event_effects_label.text = str(data.get("effects_text", ""))
+
+    var tone: String = str(data.get("tone", "neutral"))
+    if tone == "danger":
+        event_title_label.add_theme_color_override("font_color", Color("#d9827d"))
+    elif tone == "positive":
+        event_title_label.add_theme_color_override("font_color", Color("#9fd0ad"))
+    else:
+        event_title_label.add_theme_color_override("font_color", GOLD_BRIGHT)
+
+    event_overlay.visible = true
+    event_overlay.modulate = Color(1, 1, 1, 0)
+    event_title_label.modulate = Color(1, 1, 1, 0)
+    event_body_label.modulate = Color(1, 1, 1, 0)
+    event_effects_label.modulate = Color(1, 1, 1, 0)
+    event_button.modulate = Color(1, 1, 1, 0)
+    event_button.disabled = true
+
+    var tween: Tween = create_tween()
+    tween.tween_property(event_overlay, "modulate:a", 1.0, 0.22)
+    tween.tween_property(event_title_label, "modulate:a", 1.0, 0.28)
+    tween.parallel().tween_property(event_body_label, "modulate:a", 1.0, 0.38)
+    tween.tween_property(event_effects_label, "modulate:a", 1.0, 0.22)
+    tween.parallel().tween_property(event_button, "modulate:a", 1.0, 0.22)
+    await tween.finished
+    event_button.disabled = false
+
+func _dismiss_event_overlay() -> void:
+    if not event_overlay_active:
+        return
+
+    event_button.disabled = true
+    var tween: Tween = create_tween()
+    tween.tween_property(event_overlay, "modulate:a", 0.0, 0.20)
+    await tween.finished
+    event_overlay.visible = false
+    event_overlay_active = false
+
+    if not event_queue.is_empty():
+        _play_next_event()
+    else:
+        input_locked = false
+        _set_choice_buttons_enabled(true)
+
+func _set_choice_buttons_enabled(enabled: bool) -> void:
+    left_button.disabled = not enabled
+    right_button.disabled = not enabled
+
+func _animate_card_out() -> void:
+    var tween: Tween = create_tween()
+    tween.tween_property(card_panel, "modulate:a", 0.0, 0.16)
+    tween.parallel().tween_property(choices_container, "modulate:a", 0.0, 0.16)
+    tween.parallel().tween_property(portrait, "modulate:a", 0.35, 0.16)
+    await tween.finished
+
+func _animate_card_in() -> void:
+    card_panel.modulate.a = 0.0
+    choices_container.modulate.a = 0.0
+    portrait.modulate.a = 0.35
+
+    var tween: Tween = create_tween()
+    tween.tween_property(portrait, "modulate:a", 1.0, 0.24)
+    tween.parallel().tween_property(card_panel, "modulate:a", 1.0, 0.28)
+    tween.parallel().tween_property(choices_container, "modulate:a", 1.0, 0.30)
+    await tween.finished
+
+func _season_transition_text(target_season: String) -> String:
+    match target_season:
+        "Kış":
+            return "Ayaz bozkıra indi. Sürüler kışlaklara çekildi; erzak, yakacak ve sabır artık daha kıymetli."
+        "İlkbahar":
+            return "Kar çözülüyor, yollar yeniden açılıyor. Boylar göç hazırlığında; haberler otağa daha hızlı ulaşacak."
+        "Yaz":
+            return "Bozkır kuruyor. Sefer mevsimi açıldı; atlar güçlü, fakat su ve otlak üzerindeki baskı artıyor."
+        "Sonbahar":
+            return "Sürüler kışlaklara dönüyor. Her oba ambarını sayıyor; yaklaşan soğuk için alınan kararların hesabı görülüyor."
+        _:
+            return "Bozkırda zaman ilerliyor ve dengeler değişiyor."
+
+func _queue_time_and_world_events(previous_year: int, previous_season: String) -> void:
+    if turn_no <= 0:
+        return
+
+    if year == previous_year and season == previous_season:
+        return
+
+    _queue_event({
+        "kicker": "ZAMAN GEÇİYOR",
+        "title": "%d  •  %s" % [year, season.to_upper()],
+        "text": _season_transition_text(season),
+        "effects_text": "",
+        "tone": "neutral"
+    })
+    _maybe_queue_world_event()
+
+func _maybe_queue_world_event() -> void:
+    if random_events.is_empty():
+        return
+
+    var simulation: Dictionary = world_defaults.get("simulation", {}) as Dictionary
+    var chance: float = float(simulation.get("season_event_chance", 0.62))
+    var eligible: Array[Dictionary] = []
+
+    for event_variant: Variant in random_events:
+        var event_data: Dictionary = event_variant as Dictionary
+        var seasons: Array = event_data.get("seasons", []) as Array
+        if not seasons.is_empty() and not seasons.has(season):
+            continue
+
+        var event_flag: String = "world_event_%s_%d" % [str(event_data.get("id", "")), year]
+        if bool(event_data.get("once_per_year", true)) and flags.has(event_flag):
+            continue
+
+        var requires: Dictionary = event_data.get("requires", {}) as Dictionary
+        if not requires.is_empty() and not _condition_matches(requires):
+            continue
+
+        eligible.append(event_data)
+
+    if eligible.is_empty() or rng.randf() > chance:
+        return
+
+    var total_weight: float = 0.0
+    for event_data: Dictionary in eligible:
+        total_weight += maxf(float(event_data.get("weight", 1.0)), 0.01)
+
+    var pick: float = rng.randf_range(0.0, total_weight)
+    var selected: Dictionary = eligible[0]
+    for event_data: Dictionary in eligible:
+        pick -= maxf(float(event_data.get("weight", 1.0)), 0.01)
+        if pick <= 0.0:
+            selected = event_data
+            break
+
+    var effects: Dictionary = selected.get("effects", {}) as Dictionary
+    _apply_stat_effects(effects, true)
+
+    var state_effects: Dictionary = selected.get("state", {}) as Dictionary
+    for key: Variant in state_effects.keys():
+        story_state[key] = int(story_state.get(key, 0)) + int(state_effects[key])
+
+    _set_flag("world_event_%s_%d" % [str(selected.get("id", "")), year])
+    history.append({
+        "year": year,
+        "season": season,
+        "era": current_era_id,
+        "event": str(selected.get("id", "")),
+        "choice": "world"
+    })
+
+    _queue_event({
+        "kicker": str(selected.get("kicker", "BOZKIRDAN HABER")),
+        "title": str(selected.get("title", "BEKLENMEDİK OLAY")),
+        "text": str(selected.get("text", "")),
+        "effects_text": _effects_text(effects),
+        "tone": str(selected.get("tone", "neutral"))
+    })
+
+func _queue_important_card(card: Dictionary) -> void:
+    var card_id: String = str(card.get("id", ""))
+    var presentation: Dictionary = card.get("presentation", {}) as Dictionary
+    if presentation.is_empty() or presented_important.has(card_id):
+        return
+
+    presented_important.append(card_id)
+    _queue_event({
+        "kicker": str(presentation.get("kicker", "ÖNEMLİ GELİŞME")),
+        "title": str(presentation.get("title", "DENGELER DEĞİŞİYOR")),
+        "text": str(presentation.get("text", card.get("text", ""))),
+        "effects_text": "",
+        "tone": str(presentation.get("tone", "neutral"))
+    })
+
+func _era_summary_text() -> String:
+    return "Bu dönemde %d karar verdin.\n\nKut: %s   •   Halk: %s\nOrdu: %s   •   Hazine: %s\n\nKağanın sana bakışı: %s\n\nVerdiğin kararlar ve bıraktığın izler sonraki dönemlerin hafızasında kalacak." % [
+        history.size(),
+        _resource_state(int(stats.get("kut", 0))),
+        _resource_state(int(stats.get("halk", 0))),
+        _resource_state(int(stats.get("ordu", 0))),
+        _resource_state(int(stats.get("hazine", 0))),
+        _trust_state(int(stats.get("guven", 0)))
+    ]
+
 func _load_game_data() -> void:
     var characters_doc: Dictionary = _load_json_dict(CHARACTERS_PATH)
     characters = characters_doc.get("characters", {}) as Dictionary
@@ -548,6 +845,8 @@ func _load_game_data() -> void:
 
     world_defaults = _load_json_dict(WORLD_STATE_PATH)
     scenario_index = _load_json_dict(SCENARIO_INDEX_PATH)
+    var random_doc: Dictionary = _load_json_dict(RANDOM_EVENTS_PATH)
+    random_events = random_doc.get("events", []) as Array
 
     current_era_id = str(world_defaults.get("start_era", scenario_index.get("start_era", "boru_era")))
     _load_scenario(current_era_id)
@@ -607,6 +906,10 @@ func _start_game() -> void:
         flags.append(str(flag_value))
 
     history.clear()
+    event_queue.clear()
+    presented_important.clear()
+    input_locked = false
+    event_overlay_active = false
     current_era_id = str(world_defaults.get("start_era", scenario_index.get("start_era", "boru_era")))
     _load_scenario(current_era_id)
 
@@ -628,6 +931,8 @@ func _show_card() -> void:
         right_button.disabled = true
         return
 
+    var previous_year: int = year
+    var previous_season: String = season
     var card: Dictionary = card_lookup[current_card_id] as Dictionary
     var left_data: Dictionary = card.get("left", {}) as Dictionary
     var right_data: Dictionary = card.get("right", {}) as Dictionary
@@ -646,16 +951,16 @@ func _show_card() -> void:
     var is_ending: bool = bool(card.get("ending", false))
     if is_ending:
         feedback_label.text = str(card.get("ending_title", "KAĞANLIK YILLIĞI"))
-        left_button.text = "YENİDEN BAŞLA"
+        left_button.text = "DÖNEM ÖZETİ"
         right_button.text = "ANA MENÜ"
-        left_button.disabled = false
-        right_button.disabled = false
     else:
         left_button.text = "←  " + str(left_data.get("text", ""))
         right_button.text = str(right_data.get("text", "")) + "  →"
         feedback_label.text = str(card.get("hint", "Kararını ver, Ulu Tarkan."))
 
     _refresh_year()
+    _queue_time_and_world_events(previous_year, previous_season)
+    _queue_important_card(card)
 
 func _set_character(character_id: String) -> void:
     var fallback_character: Dictionary = characters.get("boru_kagan", {}) as Dictionary
@@ -674,15 +979,25 @@ func _set_character(character_id: String) -> void:
     ruler_desc.text = str(character.get("description", "Bozkırın konuğu"))
 
 func _choose(side: String) -> void:
-    if current_card_id.is_empty() or not card_lookup.has(current_card_id):
+    if input_locked or current_card_id.is_empty() or not card_lookup.has(current_card_id):
         return
 
+    input_locked = true
+    _set_choice_buttons_enabled(false)
     var card: Dictionary = card_lookup[current_card_id] as Dictionary
 
     if bool(card.get("ending", false)):
         if side == "left":
-            _start_game()
+            _queue_event({
+                "kicker": "DÖNEM TAMAMLANDI",
+                "title": str(card.get("ending_title", "KAĞANLIK YILLIĞI")),
+                "text": _era_summary_text(),
+                "effects_text": "",
+                "tone": "neutral"
+            })
+            _play_next_event()
         else:
+            input_locked = false
             _show_menu()
         return
 
@@ -690,9 +1005,7 @@ func _choose(side: String) -> void:
     var effects: Dictionary = choice.get("effects", {}) as Dictionary
     var hidden: Dictionary = choice.get("state", {}) as Dictionary
 
-    for key: Variant in effects.keys():
-        if stats.has(key):
-            stats[key] = clampi(int(stats[key]) + int(effects[key]), 0, 100)
+    _apply_stat_effects(effects, true)
 
     for key: Variant in hidden.keys():
         story_state[key] = int(story_state.get(key, 0)) + int(hidden[key])
@@ -722,14 +1035,16 @@ func _choose(side: String) -> void:
     if next_id.is_empty():
         next_id = _resolve_next(card.get("next", ""))
 
-    left_button.disabled = true
-    right_button.disabled = true
-    await get_tree().create_timer(0.5).timeout
-    left_button.disabled = false
-    right_button.disabled = false
-
+    await _animate_card_out()
     current_card_id = next_id
     _show_card()
+    await _animate_card_in()
+
+    if not event_queue.is_empty():
+        _play_next_event()
+    else:
+        input_locked = false
+        _set_choice_buttons_enabled(true)
 
 func _resolve_next(next_value: Variant) -> String:
     if next_value is String:
@@ -824,6 +1139,13 @@ func _clear_flag(flag_name: String) -> void:
     if index >= 0:
         flags.remove_at(index)
 
+func _apply_stat_effects(effects: Dictionary, animated: bool = false) -> void:
+    for key: Variant in effects.keys():
+        if stats.has(key):
+            stats[key] = clampi(int(stats[key]) + int(effects[key]), 0, 100)
+
+    _refresh_stats(animated)
+
 func _effects_text(effects: Dictionary) -> String:
     var names: Dictionary = {"kut":"Kut", "halk":"Halk", "ordu":"Ordu", "hazine":"Hazine", "guven":"Kağanın güveni"}
     var parts: Array[String] = []
@@ -835,19 +1157,24 @@ func _effects_text(effects: Dictionary) -> String:
 
         var magnitude: int = absi(value)
         var arrows: String = "↑" if value > 0 else "↓"
-        if magnitude >= 8:
+        if magnitude >= 6:
             arrows = arrows + arrows + arrows
-        elif magnitude >= 4:
+        elif magnitude >= 3:
             arrows = arrows + arrows
 
         parts.append("%s %s" % [str(names.get(key, key)), arrows])
 
     return "   •   ".join(parts)
 
-func _refresh_stats() -> void:
+func _refresh_stats(animated: bool = false) -> void:
     for key: Variant in stat_bars.keys():
         var bar: ProgressBar = stat_bars[key] as ProgressBar
-        bar.value = float(stats[key])
+        var target_value: float = float(stats[key])
+        if animated and game_layer.visible:
+            var tween: Tween = create_tween()
+            tween.tween_property(bar, "value", target_value, 0.32)
+        else:
+            bar.value = target_value
 
     for key: Variant in stat_states.keys():
         var state: Label = stat_states[key] as Label

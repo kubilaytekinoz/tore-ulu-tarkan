@@ -1,5 +1,146 @@
 {
-  "version": 1,
-  "events": [],
-  "note": "Ana dönem akışını bozmadan araya girecek kısa olaylar burada tutulacak."
+  "version": 2,
+  "note": "Mevsim geçişlerinde ana senaryonun arasına giren kısa dünya olayları. Sayısal sonuçlar görünmez; oyuncuya yalnız yön ve şiddet gösterilir.",
+  "events": [
+    {
+      "id": "winter_hard_frost",
+      "seasons": [
+        "Kış"
+      ],
+      "weight": 5,
+      "once_per_year": true,
+      "kicker": "KIŞLAKTAN HABER",
+      "title": "SERT AYAZ",
+      "text": "Gece sıcaklığı ansızın düştü. İki obada sürüler zayıfladı, odun ve yem fiyatı yükseldi.",
+      "tone": "danger",
+      "effects": {
+        "halk": -2,
+        "hazine": -2
+      }
+    },
+    {
+      "id": "winter_famine",
+      "seasons": [
+        "Kış"
+      ],
+      "weight": 4,
+      "once_per_year": true,
+      "kicker": "KARA KIŞ",
+      "title": "ERZAK DARLIĞI",
+      "text": "Ambarlar beklenenden hızlı boşalıyor. Kuzey obalarından açlık haberleri geliyor; yardım gecikirse huzursuzluk büyüyecek.",
+      "tone": "danger",
+      "requires": {
+        "source": "stats",
+        "key": "hazine",
+        "lte": 48
+      },
+      "effects": {
+        "halk": -5,
+        "hazine": -4,
+        "kut": -2
+      },
+      "state": {
+        "boy_anger": 1
+      }
+    },
+    {
+      "id": "spring_herds",
+      "seasons": [
+        "İlkbahar"
+      ],
+      "weight": 3,
+      "once_per_year": true,
+      "kicker": "BOZKIRDAN HABER",
+      "title": "SÜRÜLER TOPARLANIYOR",
+      "text": "Kıştan çıkan sürüler beklenenden iyi durumda. Yeni doğumlar obaların yüzünü güldürdü.",
+      "tone": "positive",
+      "effects": {
+        "halk": 2,
+        "hazine": 1
+      }
+    },
+    {
+      "id": "spring_flood",
+      "seasons": [
+        "İlkbahar"
+      ],
+      "weight": 2,
+      "once_per_year": true,
+      "kicker": "YOLLARDAN HABER",
+      "title": "IRMAK TAŞTI",
+      "text": "Eriyen karlar doğu yolunu bastı. Birkaç köprü yıkıldı; ulaklar ve erzak kervanları gecikiyor.",
+      "tone": "danger",
+      "effects": {
+        "hazine": -2,
+        "ordu": -1
+      }
+    },
+    {
+      "id": "summer_drought",
+      "seasons": [
+        "Yaz"
+      ],
+      "weight": 4,
+      "once_per_year": true,
+      "kicker": "OTLAKLARDAN HABER",
+      "title": "KURAKLIK",
+      "text": "Yağmur gecikti. Güney otlakları sarardı; su başlarında boylar arasında tartışmalar başladı.",
+      "tone": "danger",
+      "effects": {
+        "halk": -3,
+        "hazine": -2
+      },
+      "state": {
+        "boy_anger": 1
+      }
+    },
+    {
+      "id": "summer_hunt",
+      "seasons": [
+        "Yaz"
+      ],
+      "weight": 2,
+      "once_per_year": true,
+      "kicker": "KAĞANLIKTA",
+      "title": "BEREKETLİ AV",
+      "text": "Avcı birlikleri dolu döndü. Et obalara dağıtıldı, toyda Kağan'ın cömertliği konuşuluyor.",
+      "tone": "positive",
+      "effects": {
+        "halk": 2,
+        "kut": 1
+      }
+    },
+    {
+      "id": "autumn_caravan",
+      "seasons": [
+        "Sonbahar"
+      ],
+      "weight": 3,
+      "once_per_year": true,
+      "kicker": "KERVAN YOLUNDAN",
+      "title": "TÜCCAR KERVANI",
+      "text": "Batıdan büyük bir kervan ulaştı. Demir, kumaş ve gümüş piyasaya girdi; hazine nefes aldı.",
+      "tone": "positive",
+      "effects": {
+        "hazine": 3,
+        "kut": 1
+      }
+    },
+    {
+      "id": "autumn_horse_sickness",
+      "seasons": [
+        "Sonbahar"
+      ],
+      "weight": 3,
+      "once_per_year": true,
+      "kicker": "ORDUGÂHTAN HABER",
+      "title": "ATLARDA HASTALIK",
+      "text": "Süvari atlarının bir kısmında ateş ve halsizlik görüldü. Hastalık yayılmadan sürülerin ayrılması gerekiyor.",
+      "tone": "danger",
+      "effects": {
+        "ordu": -3,
+        "hazine": -2
+      }
+    }
+  ]
 }
