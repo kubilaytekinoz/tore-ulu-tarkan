@@ -298,7 +298,7 @@ func _build_game() -> void:
     portrait_panel.add_child(portrait_stack)
 
     var portrait: TextureRect = TextureRect.new()
-    portrait.texture = load("res://assets/characters/boru_kagan_real.webp") as Texture2D
+    portrait.texture = load("res://assets/characters/boru_kagan_main.webp") as Texture2D
     portrait.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
     portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
