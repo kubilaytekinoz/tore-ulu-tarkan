@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "characters": {
+    "boru_kagan": {
+      "name": "BÖRÜ KAĞAN",
+      "short_name": "Börü Kağan",
+      "role": "Kağan",
+      "description": "Kağan  •  Töre'nin sahibi",
+      "birth_year": 649,
+      "portrait": "res://assets/characters/boru_kagan_v2.webp",
+      "family": {
+        "spouse": "altun_hatun",
+        "children": [
+          "arslan_tegin"
+        ]
+      },
+      "tags": [
+        "hanedan",
+        "kagan",
+        "birinci_nesil"
+      ]
+    },
+    "altun_hatun": {
+      "name": "ALTUN HATUN",
+      "short_name": "Altun Hatun",
+      "role": "Hatun",
+      "description": "Hatun  •  Sarayın güçlü sesi",
+      "birth_year": 653,
+      "portrait": "res://assets/characters/altun_hatun_main.webp",
+      "family": {
+        "spouse": "boru_kagan",
+        "children": [
+          "arslan_tegin"
+        ]
+      },
+      "tags": [
+        "hanedan",
+        "saray",
+        "birinci_nesil"
+      ]
+    },
+    "alp_shad": {
+      "name": "ALP ŞAD",
+      "short_name": "Alp Şad",
+      "role": "Şad",
+      "description": "Şad  •  Sınır ordularının kumandanı",
+      "birth_year": 645,
+      "portrait": "res://assets/characters/alp_shad_main.webp",
+      "family": {
+        "children": [
+          "bars_alp"
+        ]
+      },
+      "tags": [
+        "ordu",
+        "komutan",
+        "birinci_nesil"
+      ]
+    },
+    "kara_yabgu": {
+      "name": "KARA YABGU",
+      "short_name": "Kara Yabgu",
+      "role": "Yabgu",
+      "description": "Yabgu  •  Batı kanadının kudretli beyi",
+      "birth_year": 641,
+      "portrait": "res://assets/characters/kara_yabgu_main.webp",
+      "family": {
+        "children": [
+          "tuman_bey"
+        ]
+      },
+      "tags": [
+        "bati",
+        "boy_beyi",
+        "birinci_nesil"
+      ]
+    },
+    "ak_boru": {
+      "name": "AK BÖRÜ",
+      "short_name": "Ak Börü",
+      "role": "Kam",
+      "description": "Kam  •  Bozkırın bilgesi",
+      "birth_year": 624,
+      "portrait": "res://assets/characters/ak_boru_main.webp",
+      "family": {},
+      "tags": [
+        "kam",
+        "bilge",
+        "birinci_nesil"
+      ]
+    },
+    "arslan_tegin": {
+      "name": "ARSLAN TEGİN",
+      "short_name": "Arslan Tegin",
+      "role": "Tegin",
+      "description": "Tegin  •  Börü Kağan'ın varisi",
+      "birth_year": 666,
+      "portrait": "",
+      "family": {
+        "father": "boru_kagan",
+        "mother": "altun_hatun"
+      },
+      "tags": [
+        "hanedan",
+        "varis",
+        "ikinci_nesil"
+      ]
+    },
+    "bars_alp": {
+      "name": "BARS ALP",
+      "short_name": "Bars Alp",
+      "role": "Alp",
+      "description": "Alp  •  Alp Şad'ın oğlu",
+      "birth_year": 669,
+      "portrait": "",
+      "family": {
+        "father": "alp_shad"
+      },
+      "tags": [
+        "ordu",
+        "ikinci_nesil"
+      ]
+    },
+    "tuman_bey": {
+      "name": "TUMAN BEY",
+      "short_name": "Tuman Bey",
+      "role": "Bey",
+      "description": "Bey  •  Kara Yabgu'nun oğlu",
+      "birth_year": 668,
+      "portrait": "",
+      "family": {
+        "father": "kara_yabgu"
+      },
+      "tags": [
+        "bati",
+        "boy_beyi",
+        "ikinci_nesil"
+      ]
+    },
+    "kutlug_tegin": {
+      "name": "KUTLUĞ TEGİN",
+      "short_name": "Kutluğ Tegin",
+      "role": "Tegin",
+      "description": "Tegin  •  Yeni neslin sessiz adayı",
+      "birth_year": 676,
+      "portrait": "",
+      "family": {},
+      "tags": [
+        "hanedan",
+        "ucuncu_nesil"
+      ]
+    }
+  }
+}

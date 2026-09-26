@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "id": "kutlug_era",
+  "title": "Kutluğ Dönemi",
+  "subtitle": "İkinci Neslin Hesabı",
+  "start_year": 692,
+  "end_year": 700,
+  "ruler_id": "kutlug_tegin",
+  "status": "planned",
+  "inherit_flags": true,
+  "inherit_history": true,
+  "cards": []
+}

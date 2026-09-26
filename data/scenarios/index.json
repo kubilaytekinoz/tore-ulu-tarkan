@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "start_era": "boru_era",
+  "eras": {
+    "boru_era": {
+      "title": "Börü Kağan Dönemi",
+      "period": "682–685",
+      "ruler": "boru_kagan",
+      "path": "res://data/scenarios/boru_era.json",
+      "playable": true
+    },
+    "arslan_era": {
+      "title": "Arslan Kağan Dönemi",
+      "period": "685–692",
+      "ruler": "arslan_tegin",
+      "path": "res://data/scenarios/arslan_era.json",
+      "playable": false
+    },
+    "kutlug_era": {
+      "title": "Kutluğ Dönemi",
+      "period": "692–700",
+      "ruler": "kutlug_tegin",
+      "path": "res://data/scenarios/kutlug_era.json",
+      "playable": false
+    }
+  }
+}

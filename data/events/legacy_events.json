@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "id": "bars_remembers_alp_saved",
+      "enabled": false,
+      "speaker_id": "bars_alp",
+      "requires": {
+        "flags": [
+          "alp_defended_683"
+        ]
+      },
+      "text": "Babam, adını temiz tutmasını sana borçlu olduğunu söylerdi, Ulu Tarkan."
+    },
+    {
+      "id": "bars_remembers_alp_removed",
+      "enabled": false,
+      "speaker_id": "bars_alp",
+      "requires": {
+        "flags": [
+          "alp_removed_683"
+        ]
+      },
+      "text": "Babamın kılıcını senin emrinle elinden aldılar. Ben o günü unutmadım."
+    },
+    {
+      "id": "tuman_remembers_kara_arrested",
+      "enabled": false,
+      "speaker_id": "tuman_bey",
+      "requires": {
+        "flags": [
+          "kara_arrested_683"
+        ]
+      },
+      "text": "Babam zincire vurulduğunda ben çocuktum. O günün hesabı hâlâ kapanmadı."
+    }
+  ]
+}

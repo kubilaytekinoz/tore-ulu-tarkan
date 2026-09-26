@@ -16,27 +16,25 @@ const HALK_FILL: Color = Color("#79c7a0")
 const ORDU_FILL: Color = Color("#c96d69")
 const HAZINE_FILL: Color = Color("#7aa8be")
 
-const CHARACTER_PORTRAITS: Dictionary = {
-    "BÖRÜ KAĞAN": "res://assets/characters/boru_kagan_v2.webp",
-    "ALTUN HATUN": "res://assets/characters/altun_hatun_main.webp",
-    "ALP ŞAD": "res://assets/characters/alp_shad_main.webp",
-    "KARA YABGU": "res://assets/characters/kara_yabgu_main.webp",
-    "AK BÖRÜ": "res://assets/characters/ak_boru_main.webp"
-}
-
-const CHARACTER_DESCRIPTIONS: Dictionary = {
-    "BÖRÜ KAĞAN": "Kağan  •  Töre'nin sahibi",
-    "ALTUN HATUN": "Hatun  •  Sarayın güçlü sesi",
-    "ALP ŞAD": "Şad  •  Sınır ordularının kumandanı",
-    "KARA YABGU": "Yabgu  •  Batı kanadının kudretli beyi",
-    "AK BÖRÜ": "Kam  •  Bozkırın bilgesi"
-}
+const CHARACTERS_PATH: String = "res://data/characters.json"
+const DYNASTIES_PATH: String = "res://data/dynasties.json"
+const WORLD_STATE_PATH: String = "res://data/world_state.json"
+const SCENARIO_INDEX_PATH: String = "res://data/scenarios/index.json"
 
 var stats: Dictionary = {"kut":61, "halk":54, "ordu":67, "hazine":46, "guven":58}
 var year: int = 682
 var season: String = "Sonbahar"
 var cards: Array = []
 var card_lookup: Dictionary = {}
+var characters: Dictionary = {}
+var dynasties: Dictionary = {}
+var world_defaults: Dictionary = {}
+var scenario_index: Dictionary = {}
+var character_state: Dictionary = {}
+var flags: Array[String] = []
+var history: Array[Dictionary] = []
+var current_era_id: String = ""
+var current_ruler_id: String = ""
 var scenario_start: String = ""
 var current_card_id: String = ""
 var turn_no: int = 0
@@ -74,7 +72,7 @@ func _ready() -> void:
     _build_background()
     _build_menu()
     _build_game()
-    _load_cards()
+    _load_game_data()
     _show_menu()
 
 func _build_background() -> void:
@@ -188,7 +186,7 @@ func _build_menu() -> void:
     col.add_child(settings_btn)
 
     var version: Label = Label.new()
-    version.text = "PROTOTİP  •  v0.8"
+    version.text = "PROTOTİP  •  v1.1"
     version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     version.add_theme_font_size_override("font_size", 18)
     version.add_theme_color_override("font_color", Color("#687483"))
@@ -541,53 +539,79 @@ func _dismiss_intro() -> void:
     intro_overlay.visible = false
     intro_button.disabled = false
 
-func _load_cards() -> void:
-    var file: FileAccess = FileAccess.open("res://data/cards.json", FileAccess.READ)
+func _load_game_data() -> void:
+    var characters_doc: Dictionary = _load_json_dict(CHARACTERS_PATH)
+    characters = characters_doc.get("characters", {}) as Dictionary
+
+    var dynasties_doc: Dictionary = _load_json_dict(DYNASTIES_PATH)
+    dynasties = dynasties_doc
+
+    world_defaults = _load_json_dict(WORLD_STATE_PATH)
+    scenario_index = _load_json_dict(SCENARIO_INDEX_PATH)
+
+    current_era_id = str(world_defaults.get("start_era", scenario_index.get("start_era", "boru_era")))
+    _load_scenario(current_era_id)
+
+func _load_json_dict(path: String) -> Dictionary:
+    var file: FileAccess = FileAccess.open(path, FileAccess.READ)
     if file == null:
-        push_error("cards.json açılamadı.")
-        return
+        push_error("%s açılamadı." % path)
+        return {}
 
     var parsed: Variant = JSON.parse_string(file.get_as_text())
-    card_lookup.clear()
-    cards.clear()
-
     if parsed is Dictionary:
-        var scenario: Dictionary = parsed as Dictionary
-        scenario_start = str(scenario.get("start_id", ""))
-        var loaded_cards: Array = scenario.get("cards", []) as Array
-        cards = loaded_cards
-        for item: Variant in loaded_cards:
-            var card: Dictionary = item as Dictionary
-            card_lookup[str(card.get("id", ""))] = card
-    elif parsed is Array:
-        cards = parsed as Array
-        for item: Variant in cards:
-            var card: Dictionary = item as Dictionary
-            var id: String = str(card.get("id", ""))
-            card_lookup[id] = card
-            if scenario_start.is_empty():
-                scenario_start = id
-    else:
-        push_error("cards.json geçerli bir senaryo değil.")
+        return parsed as Dictionary
+
+    push_error("%s geçerli bir JSON nesnesi değil." % path)
+    return {}
+
+func _load_scenario(era_id: String) -> void:
+    var eras: Dictionary = scenario_index.get("eras", {}) as Dictionary
+    if not eras.has(era_id):
+        push_error("Senaryo dönemi bulunamadı: %s" % era_id)
+        return
+
+    var era_info: Dictionary = eras[era_id] as Dictionary
+    var path: String = str(era_info.get("path", ""))
+    if path.is_empty():
+        push_error("Senaryo yolu boş: %s" % era_id)
+        return
+
+    var scenario: Dictionary = _load_json_dict(path)
+    scenario_start = str(scenario.get("start_id", ""))
+    current_ruler_id = str(scenario.get("ruler_id", era_info.get("ruler", "")))
+    cards = scenario.get("cards", []) as Array
+    card_lookup.clear()
+
+    for item: Variant in cards:
+        var card: Dictionary = item as Dictionary
+        card_lookup[str(card.get("id", ""))] = card
 
 func _show_menu() -> void:
     menu_layer.visible = true
     game_layer.visible = false
 
 func _start_game() -> void:
-    stats = {"kut":61, "halk":54, "ordu":67, "hazine":46, "guven":58}
-    story_state = {
-        "boy_anger": 0,
-        "kara_power": 0,
-        "kara_anger": 0,
-        "alp_loyalty": 0,
-        "altun_influence": 0,
-        "guard_loyalty": 0,
-        "plot": 0,
-        "arslan_support": 0
-    }
-    year = 682
-    season = "Sonbahar"
+    var default_stats: Dictionary = world_defaults.get("stats", {}) as Dictionary
+    stats = default_stats.duplicate(true)
+
+    var default_story: Dictionary = world_defaults.get("story_state", {}) as Dictionary
+    story_state = default_story.duplicate(true)
+
+    var default_characters: Dictionary = world_defaults.get("character_state", {}) as Dictionary
+    character_state = default_characters.duplicate(true)
+
+    flags.clear()
+    var default_flags: Array = world_defaults.get("flags", []) as Array
+    for flag_value: Variant in default_flags:
+        flags.append(str(flag_value))
+
+    history.clear()
+    current_era_id = str(world_defaults.get("start_era", scenario_index.get("start_era", "boru_era")))
+    _load_scenario(current_era_id)
+
+    year = int(world_defaults.get("start_year", 682))
+    season = str(world_defaults.get("start_season", "Sonbahar"))
     turn_no = 0
     current_card_id = scenario_start
     menu_layer.visible = false
@@ -613,9 +637,10 @@ func _show_card() -> void:
     if card.has("season"):
         season = str(card["season"])
 
-    var speaker: String = str(card.get("speaker", "BÖRÜ KAĞAN"))
-    speaker_label.text = speaker
-    _set_character(speaker)
+    var speaker_id: String = str(card.get("speaker_id", current_ruler_id))
+    var character: Dictionary = characters.get(speaker_id, {}) as Dictionary
+    speaker_label.text = str(character.get("name", "TÖRE"))
+    _set_character(speaker_id)
     card_text.text = "“" + str(card.get("text", "")) + "”"
 
     var is_ending: bool = bool(card.get("ending", false))
@@ -632,14 +657,21 @@ func _show_card() -> void:
 
     _refresh_year()
 
-func _set_character(character_name: String) -> void:
-    var portrait_path: String = str(CHARACTER_PORTRAITS.get(character_name, CHARACTER_PORTRAITS["BÖRÜ KAĞAN"]))
-    var texture: Texture2D = load(portrait_path) as Texture2D
-    if texture != null:
-        portrait.texture = texture
+func _set_character(character_id: String) -> void:
+    var fallback_character: Dictionary = characters.get("boru_kagan", {}) as Dictionary
+    var character: Dictionary = characters.get(character_id, fallback_character) as Dictionary
+    var portrait_path: String = str(character.get("portrait", ""))
 
-    ruler_name.text = character_name
-    ruler_desc.text = str(CHARACTER_DESCRIPTIONS.get(character_name, "Bozkırın konuğu"))
+    if portrait_path.is_empty():
+        portrait_path = str(fallback_character.get("portrait", ""))
+
+    if not portrait_path.is_empty():
+        var texture: Texture2D = load(portrait_path) as Texture2D
+        if texture != null:
+            portrait.texture = texture
+
+    ruler_name.text = str(character.get("name", "TÖRE"))
+    ruler_desc.text = str(character.get("description", "Bozkırın konuğu"))
 
 func _choose(side: String) -> void:
     if current_card_id.is_empty() or not card_lookup.has(current_card_id):
@@ -664,6 +696,23 @@ func _choose(side: String) -> void:
 
     for key: Variant in hidden.keys():
         story_state[key] = int(story_state.get(key, 0)) + int(hidden[key])
+
+    var set_flags: Array = choice.get("set_flags", []) as Array
+    for flag_value: Variant in set_flags:
+        _set_flag(str(flag_value))
+
+    var clear_flags: Array = choice.get("clear_flags", []) as Array
+    for flag_value: Variant in clear_flags:
+        _clear_flag(str(flag_value))
+
+    var history_entry: Dictionary = {
+        "year": year,
+        "season": season,
+        "era": current_era_id,
+        "event": current_card_id,
+        "choice": side
+    }
+    history.append(history_entry)
 
     feedback_label.text = _effects_text(effects)
     _refresh_stats()
@@ -713,11 +762,44 @@ func _condition_matches(condition: Dictionary) -> bool:
                 return true
         return false
 
+    if condition.has("flags"):
+        var required_flags: Array = condition["flags"] as Array
+        for required_flag: Variant in required_flags:
+            if not flags.has(str(required_flag)):
+                return false
+        return true
+
+    if condition.has("not_flags"):
+        var forbidden_flags: Array = condition["not_flags"] as Array
+        for forbidden_flag: Variant in forbidden_flags:
+            if flags.has(str(forbidden_flag)):
+                return false
+        return true
+
+    if condition.has("character_alive"):
+        var alive_id: String = str(condition["character_alive"])
+        var alive_state: Dictionary = character_state.get(alive_id, {}) as Dictionary
+        return bool(alive_state.get("alive", false))
+
+    if condition.has("character_dead"):
+        var dead_id: String = str(condition["character_dead"])
+        var dead_state: Dictionary = character_state.get(dead_id, {}) as Dictionary
+        return not bool(dead_state.get("alive", true))
+
+    if condition.has("min_year") and year < int(condition["min_year"]):
+        return false
+    if condition.has("max_year") and year > int(condition["max_year"]):
+        return false
+
     var key: String = str(condition.get("key", ""))
     var source: String = str(condition.get("source", "story"))
     var value: int = int(story_state.get(key, 0))
     if source == "stats":
         value = int(stats.get(key, 0))
+    elif source == "character":
+        var character_id: String = str(condition.get("character_id", ""))
+        var state: Dictionary = character_state.get(character_id, {}) as Dictionary
+        value = int(state.get(key, 0))
 
     if condition.has("gte") and value < int(condition["gte"]):
         return false
@@ -731,6 +813,16 @@ func _condition_matches(condition: Dictionary) -> bool:
         return false
 
     return true
+
+func _set_flag(flag_name: String) -> void:
+    if flag_name.is_empty() or flags.has(flag_name):
+        return
+    flags.append(flag_name)
+
+func _clear_flag(flag_name: String) -> void:
+    var index: int = flags.find(flag_name)
+    if index >= 0:
+        flags.remove_at(index)
 
 func _effects_text(effects: Dictionary) -> String:
     var names: Dictionary = {"kut":"Kut", "halk":"Halk", "ordu":"Ordu", "hazine":"Hazine", "guven":"Kağanın güveni"}

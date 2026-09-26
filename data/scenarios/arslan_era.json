@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "id": "arslan_era",
+  "title": "Arslan Kağan Dönemi",
+  "subtitle": "Babanın Gölgesinde",
+  "start_year": 685,
+  "end_year": 692,
+  "ruler_id": "arslan_tegin",
+  "status": "planned",
+  "inherit_flags": true,
+  "inherit_history": true,
+  "cards": []
+}

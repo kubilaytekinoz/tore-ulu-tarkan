@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "start_era": "boru_era",
+  "start_year": 682,
+  "start_season": "Sonbahar",
+  "current_ruler": "boru_kagan",
+  "player": {
+    "title": "Ulu Tarkan",
+    "birth_year": 642
+  },
+  "stats": {
+    "kut": 61,
+    "halk": 54,
+    "ordu": 67,
+    "hazine": 46,
+    "guven": 58
+  },
+  "story_state": {
+    "boy_anger": 0,
+    "kara_power": 0,
+    "kara_anger": 0,
+    "alp_loyalty": 0,
+    "altun_influence": 0,
+    "guard_loyalty": 0,
+    "plot": 0,
+    "arslan_support": 0
+  },
+  "character_state": {
+    "boru_kagan": {
+      "alive": true,
+      "loyalty": 55,
+      "power": 80
+    },
+    "altun_hatun": {
+      "alive": true,
+      "loyalty": 55,
+      "power": 55
+    },
+    "alp_shad": {
+      "alive": true,
+      "loyalty": 50,
+      "power": 65
+    },
+    "kara_yabgu": {
+      "alive": true,
+      "loyalty": 35,
+      "power": 60
+    },
+    "ak_boru": {
+      "alive": true,
+      "loyalty": 50,
+      "power": 20
+    },
+    "arslan_tegin": {
+      "alive": true,
+      "loyalty": 50,
+      "power": 20
+    },
+    "bars_alp": {
+      "alive": true,
+      "loyalty": 50,
+      "power": 5
+    },
+    "tuman_bey": {
+      "alive": true,
+      "loyalty": 50,
+      "power": 5
+    },
+    "kutlug_tegin": {
+      "alive": true,
+      "loyalty": 50,
+      "power": 0
+    }
+  },
+  "flags": [],
+  "history": []
+}

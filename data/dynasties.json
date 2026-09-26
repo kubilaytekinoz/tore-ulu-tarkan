@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "houses": {
+    "gok_hanedan": {
+      "name": "Gök Hanedanı",
+      "members": [
+        "boru_kagan",
+        "altun_hatun",
+        "arslan_tegin",
+        "kutlug_tegin"
+      ]
+    },
+    "alp_soyu": {
+      "name": "Alp Şad'ın Ocağı",
+      "members": [
+        "alp_shad",
+        "bars_alp"
+      ]
+    },
+    "kara_soyu": {
+      "name": "Kara Yabgu'nun Ocağı",
+      "members": [
+        "kara_yabgu",
+        "tuman_bey"
+      ]
+    }
+  },
+  "relations": [
+    {
+      "type": "spouse",
+      "a": "boru_kagan",
+      "b": "altun_hatun"
+    },
+    {
+      "type": "parent",
+      "parent": "boru_kagan",
+      "child": "arslan_tegin"
+    },
+    {
+      "type": "parent",
+      "parent": "altun_hatun",
+      "child": "arslan_tegin"
+    },
+    {
+      "type": "parent",
+      "parent": "alp_shad",
+      "child": "bars_alp"
+    },
+    {
+      "type": "parent",
+      "parent": "kara_yabgu",
+      "child": "tuman_bey"
+    }
+  ]
+}
