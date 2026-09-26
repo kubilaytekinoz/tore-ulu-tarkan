@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900">
+<defs>
+ <radialGradient id="bg" cx=".5" cy=".34" r=".75"><stop stop-color="#4a3628"/><stop offset=".45" stop-color="#201b1a"/><stop offset="1" stop-color="#0b0f13"/></radialGradient>
+ <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8d7a68"/><stop offset=".45" stop-color="#4a4037"/><stop offset="1" stop-color="#1f1d1b"/></linearGradient>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0d08a"/><stop offset=".35" stop-color="#93682f"/><stop offset="1" stop-color="#4f3219"/></linearGradient>
+</defs>
+<rect width="720" height="900" fill="url(#bg)"/>
+<circle cx="610" cy="250" r="105" fill="#d6873b" opacity=".22"/>
+<path fill="#151a1d" stroke="#7a5936" stroke-width="6" d="M90 900V690c0-175 120-302 270-302s270 127 270 302v210z"/>
+<path fill="url(#fur)" d="M86 722c32-185 114-276 202-300l72 70 72-70c96 31 173 123 202 300l-95-36-57 214H238l-59-214z"/>
+<path fill="#2b2420" stroke="#b17a38" stroke-width="7" d="M252 470c-24 56-32 139-15 215l123 74 123-74c17-76 9-159-15-215l-108 43z"/>
+<ellipse cx="360" cy="326" rx="116" ry="145" fill="#a96d4d"/>
+<path fill="#171517" d="M249 306c10-115 64-182 132-182 75 0 123 72 125 183-31-33-72-53-118-58-53-6-95 11-139 57z"/>
+<path fill="#161315" d="M285 368c10 78 37 132 75 132s70-57 78-134c-19 25-45 39-78 39-31 0-56-12-75-37z"/>
+<path fill="#251b19" d="M301 373c22 18 41 25 59 25 22 0 42-8 63-27-14 68-34 95-63 95-28 0-47-27-59-93z"/>
+<path fill="url(#metal)" stroke="#e4c67f" stroke-width="5" d="M245 205l37-85 45 39 33-79 33 79 45-39 37 85-38 44H283z"/>
+<circle cx="360" cy="169" r="24" fill="#151a20" stroke="#e2c375" stroke-width="7"/>
+<path fill="#e4c67f" d="M307 326l25 7-17 10zm106 0l-25 7 17 10z"/>
+<path fill="#24181a" d="M333 364c18 8 36 8 54 0-8 21-18 30-27 30-10 0-19-9-27-30z"/>
+<path fill="none" stroke="#d0a55b" stroke-width="6" d="M251 538c72 30 146 30 218 0M238 690c79 31 164 31 244 0"/>
+<circle cx="360" cy="596" r="48" fill="#202932" stroke="url(#metal)" stroke-width="10"/>
+<path fill="none" stroke="#d7b568" stroke-width="7" d="M337 611l23-43 23 43-23 14z"/>
+<path fill="#0d1217" opacity=".7" d="M0 760h720v140H0z"/>
+</svg>
