@@ -152,7 +152,7 @@ func _build_menu() -> void:
     col.add_child(settings_btn)
 
     var version: Label = Label.new()
-    version.text = "PROTOTİP  •  v0.5"
+    version.text = "PROTOTİP  •  v0.7"
     version.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     version.add_theme_font_size_override("font_size", 18)
     version.add_theme_color_override("font_color", Color("#687483"))
@@ -298,7 +298,7 @@ func _build_game() -> void:
     portrait_panel.add_child(portrait_stack)
 
     var portrait: TextureRect = TextureRect.new()
-    portrait.texture = load("res://assets/characters/boru_kagan.svg") as Texture2D
+    portrait.texture = load("res://assets/characters/boru_kagan_real.webp") as Texture2D
     portrait.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
     portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
