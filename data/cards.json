@@ -1,102 +1,768 @@
-[
-  {
-    "id": "bayir_tax_01",
-    "speaker": "BÖRÜ KAĞAN",
-    "text": "Tarkan, batıdaki Bayır boyu kış yüzünden vergisini gönderemeyeceğini bildirdi.",
-    "left": {
-      "text": "Bir mevsim süre verelim.",
-      "effects": {
-        "halk": 4,
-        "kut": 2,
-        "hazine": -5
+{
+  "start_id": "bayir_tax_01",
+  "cards": [
+    {
+      "id": "bayir_tax_01",
+      "year": 682,
+      "season": "Sonbahar",
+      "speaker": "BÖRÜ KAĞAN",
+      "text": "Batıdaki Bayır boyu kışı ağır geçiriyor. Vergiyi bu mevsim ödeyemeyeceklerini bildirdiler. Töre gevşerse diğer boylar da aynı yolu seçebilir.",
+      "left": {
+        "text": "Bir mevsim süre verelim.",
+        "effects": {
+          "halk": 4,
+          "kut": 2,
+          "hazine": -5
+        },
+        "state": {
+          "boy_anger": -1
+        },
+        "next": "alp_border_01"
+      },
+      "right": {
+        "text": "Vergi töredir. Toplansın.",
+        "effects": {
+          "hazine": 6,
+          "halk": -4
+        },
+        "state": {
+          "boy_anger": 2
+        },
+        "next": "alp_border_01"
       }
     },
-    "right": {
-      "text": "Vergi töredir. Toplansın.",
-      "effects": {
-        "hazine": 6,
-        "halk": -3
-      }
-    }
-  },
-  {
-    "id": "altun_advice_01",
-    "speaker": "ALTUN HATUN",
-    "text": "Kağan son günlerde yalnızca askerlerle konuşuyor. Boy beylerini de dinlemesi gerektiğini düşünüyorum.",
-    "left": {
-      "text": "Kağan'a bunu söyleyeceğim.",
-      "effects": {
-        "guven": -1,
-        "kut": 2
-      }
-    },
-    "right": {
-      "text": "Kağan ne yaptığını bilir.",
-      "effects": {
-        "guven": 3,
-        "halk": -2
-      }
-    }
-  },
-  {
-    "id": "alp_sad_border_01",
-    "speaker": "ALP ŞAD",
-    "text": "Doğudaki sınırda yabancı atlılar görüldü. Yüz süvariyle keşfe çıkmak için izin istiyorum.",
-    "left": {
-      "text": "Git. Ama çatışmaya girme.",
-      "effects": {
-        "ordu": 5,
-        "hazine": -2
+    {
+      "id": "alp_border_01",
+      "year": 682,
+      "season": "Sonbahar",
+      "speaker": "ALP ŞAD",
+      "text": "Doğuda yabancı atlı izleri bulduk. Yüz süvariyle sınırı geçip kim olduklarını öğrenebilirim. İzin vermezsen yalnızca bekleriz.",
+      "left": {
+        "text": "Git. Ama savaşı sen başlatma.",
+        "effects": {
+          "ordu": 4,
+          "hazine": -2
+        },
+        "state": {
+          "alp_loyalty": 2
+        },
+        "next": "altun_divan_01"
+      },
+      "right": {
+        "text": "Sınırdan ayrılma. Emir bu.",
+        "effects": {
+          "ordu": 1,
+          "guven": 1
+        },
+        "state": {
+          "alp_loyalty": -2,
+          "plot": 1
+        },
+        "next": "altun_divan_01"
       }
     },
-    "right": {
-      "text": "Şimdilik sınırı güçlendirelim.",
-      "effects": {
-        "ordu": 3,
-        "hazine": -4,
-        "halk": 1
-      }
-    }
-  },
-  {
-    "id": "kara_yabgu_01",
-    "speaker": "KARA YABGU",
-    "text": "Ulu Tarkan, batıdaki boylar sınırı koruyor ama merkezin buyruğu her geçen gün ağırlaşıyor. Bana daha geniş yetki verilmesini Kağan'a sen söyle.",
-    "left": {
-      "text": "Talebini Kağan'a ileteceğim.",
-      "effects": {
-        "guven": -2,
-        "ordu": 3,
-        "kut": -2
-      }
-    },
-    "right": {
-      "text": "Yetki töreden üstündür sanma.",
-      "effects": {
-        "guven": 2,
-        "ordu": -2,
-        "kut": 3
-      }
-    }
-  },
-  {
-    "id": "ak_boru_winter_01",
-    "speaker": "AK BÖRÜ",
-    "text": "Kuzey rüzgârı erken indi, Tarkan. Sürüler kırılıyor. Halkın ambarı açılmazsa bu kış yalnız hayvanları değil, sadakati de alır götürür.",
-    "left": {
-      "text": "Hazineyi açın. Halk aç kalmasın.",
-      "effects": {
-        "hazine": -12,
-        "halk": 8,
-        "kut": 5
+    {
+      "id": "altun_divan_01",
+      "year": 682,
+      "season": "Kış",
+      "speaker": "ALTUN HATUN",
+      "text": "Kağan yalnız askerleri dinliyor. Boy beylerini toyda konuştur. Öfkelerini otağın dışında değil, gözümüzün önünde duyalım.",
+      "left": {
+        "text": "Toy toplansın. Beyler konuşsun.",
+        "effects": {
+          "kut": 3,
+          "halk": 2,
+          "guven": -1
+        },
+        "state": {
+          "altun_influence": 2,
+          "boy_anger": -1
+        },
+        "next": "kara_authority_01"
+      },
+      "right": {
+        "text": "Merkez zayıflık gösteremez.",
+        "effects": {
+          "guven": 2,
+          "halk": -2
+        },
+        "state": {
+          "altun_influence": -1,
+          "boy_anger": 1
+        },
+        "next": "kara_authority_01"
       }
     },
-    "right": {
-      "text": "Boylar kendi kışlığını hazırlamalıydı.",
-      "effects": {
-        "halk": -8,
-        "kut": -3
+    {
+      "id": "kara_authority_01",
+      "year": 682,
+      "season": "Kış",
+      "speaker": "KARA YABGU",
+      "text": "Batıdaki boylar beni dinler. Bana daha geniş yetki ver. Vergiyi de askeri de ben toplarım; Kağan'ın yükü hafifler.",
+      "left": {
+        "text": "Yetki verilsin. Ama hesap vereceksin.",
+        "effects": {
+          "ordu": 3,
+          "hazine": 3,
+          "kut": -2
+        },
+        "state": {
+          "kara_power": 3,
+          "kara_anger": -1
+        },
+        "next": "lost_caravan_01"
+      },
+      "right": {
+        "text": "Boyların üstünde yalnız Kağan vardır.",
+        "effects": {
+          "kut": 3,
+          "guven": 2
+        },
+        "state": {
+          "kara_power": -1,
+          "kara_anger": 3
+        },
+        "next": "lost_caravan_01"
       }
+    },
+    {
+      "id": "lost_caravan_01",
+      "year": 683,
+      "season": "İlkbahar",
+      "speaker": "ALTUN HATUN",
+      "text": "Bayır vergisini taşıyan kervan kayboldu. Yol kenarında Kara Yabgu'nun mührünü taşıyan bir deri parçası bulunmuş.",
+      "left": {
+        "text": "Kara Yabgu hesap versin.",
+        "effects": {
+          "guven": 2,
+          "kut": -1
+        },
+        "state": {
+          "kara_anger": 2,
+          "plot": 1
+        },
+        "next": "ak_boru_warning_01"
+      },
+      "right": {
+        "text": "Mühür delil değildir. Sessizce araştır.",
+        "effects": {
+          "hazine": -2,
+          "kut": 1
+        },
+        "state": {
+          "plot": -1,
+          "kara_anger": -1
+        },
+        "next": "ak_boru_warning_01"
+      }
+    },
+    {
+      "id": "ak_boru_warning_01",
+      "year": 683,
+      "season": "İlkbahar",
+      "speaker": "AK BÖRÜ",
+      "text": "Bir kurt ulur, herkes ona bakar. İkinci kurt sessizce çadırın arkasından geçer. Bu yıl gördüğün ilk ihanete inanma, Tarkan.",
+      "left": {
+        "text": "Sözünü aklımda tutacağım.",
+        "effects": {
+          "kut": 2
+        },
+        "state": {
+          "plot": -1
+        },
+        "next": "sealed_letter_01"
+      },
+      "right": {
+        "text": "Kehanetle devlet yönetilmez.",
+        "effects": {
+          "guven": 1
+        },
+        "state": {
+          "plot": 1
+        },
+        "next": "sealed_letter_01"
+      }
+    },
+    {
+      "id": "sealed_letter_01",
+      "year": 683,
+      "season": "Yaz",
+      "speaker": "BÖRÜ KAĞAN",
+      "text": "Muhafızlar Kara Yabgu'nun mührüyle yazılmış bir mektup buldu: 'Toy günü batı sancağı kalkacak.' Kağan öfkeyle sana bakıyor.",
+      "left": {
+        "text": "Kara Yabgu tutuklansın.",
+        "effects": {
+          "guven": 4,
+          "ordu": -2
+        },
+        "state": {
+          "kara_anger": 3,
+          "boy_anger": 2,
+          "plot": 1
+        },
+        "next": "alp_accused_01"
+      },
+      "right": {
+        "text": "Önce mührün gerçekliğini sınayalım.",
+        "effects": {
+          "guven": -2,
+          "hazine": -1
+        },
+        "state": {
+          "kara_anger": -1,
+          "plot": -1
+        },
+        "next": "alp_accused_01"
+      }
+    },
+    {
+      "id": "alp_accused_01",
+      "year": 683,
+      "season": "Yaz",
+      "speaker": "ALTUN HATUN",
+      "text": "Mektubu taşıyan ulak yakalandı. İfadesinde Alp Şad'ın adını verdi. Fakat aynı ulak iki farklı kişiye iki farklı hikâye anlatmış.",
+      "left": {
+        "text": "Alp Şad görevden alınsın.",
+        "effects": {
+          "ordu": -6,
+          "guven": 2
+        },
+        "state": {
+          "alp_loyalty": -4,
+          "plot": 2
+        },
+        "next": "guard_debt_01"
+      },
+      "right": {
+        "text": "Alp yerinde kalsın. Ulağı sorgulayın.",
+        "effects": {
+          "ordu": 3,
+          "guven": -1
+        },
+        "state": {
+          "alp_loyalty": 3,
+          "plot": -1
+        },
+        "next": "guard_debt_01"
+      }
+    },
+    {
+      "id": "guard_debt_01",
+      "year": 683,
+      "season": "Sonbahar",
+      "speaker": "ALTUN HATUN",
+      "text": "Kağan'ın muhafızbaşısının ağır borcu var. Son haftalarda cebinde yabancı gümüşler görülmüş.",
+      "left": {
+        "text": "Borcunu kapat; sonra gözümüz onda olsun.",
+        "effects": {
+          "hazine": -5
+        },
+        "state": {
+          "guard_loyalty": 3,
+          "plot": -1
+        },
+        "next": "feast_poison_01"
+      },
+      "right": {
+        "text": "Borç onun meselesi. Görevine devam etsin.",
+        "effects": {
+          "hazine": 1
+        },
+        "state": {
+          "guard_loyalty": -3,
+          "plot": 2
+        },
+        "next": "feast_poison_01"
+      }
+    },
+    {
+      "id": "feast_poison_01",
+      "year": 683,
+      "season": "Kış",
+      "speaker": "AK BÖRÜ",
+      "text": "Toy gecesi Kağan'ın kadehinden acı badem kokusu geliyor. Muhafızbaşı bir anlığına gözlerini kaçırdı. Kimse daha içmedi.",
+      "left": {
+        "text": "Kadehi değiştir. Kimse anlamasın.",
+        "effects": {
+          "guven": 1
+        },
+        "state": {
+          "plot": -1
+        },
+        "next": [
+          {
+            "when": {
+              "any": [
+                {
+                  "key": "guard_loyalty",
+                  "lte": -2
+                },
+                {
+                  "key": "plot",
+                  "gte": 4
+                }
+              ]
+            },
+            "id": "poison_strikes_01"
+          },
+          {
+            "id": "poison_stopped_01"
+          }
+        ]
+      },
+      "right": {
+        "text": "Toy dursun! Herkes aransın.",
+        "effects": {
+          "kut": -2,
+          "guven": 3
+        },
+        "state": {
+          "boy_anger": 1,
+          "plot": -2
+        },
+        "next": [
+          {
+            "when": {
+              "all": [
+                {
+                  "key": "guard_loyalty",
+                  "lte": -2
+                },
+                {
+                  "key": "plot",
+                  "gte": 3
+                }
+              ]
+            },
+            "id": "poison_strikes_01"
+          },
+          {
+            "id": "poison_stopped_01"
+          }
+        ]
+      }
+    },
+    {
+      "id": "poison_stopped_01",
+      "year": 684,
+      "season": "İlkbahar",
+      "speaker": "BÖRÜ KAĞAN",
+      "text": "Zehirli kadeh ele geçirildi. Fakat mühür Kara Yabgu'nun değil; onun mührünün kusurlu bir kopyası. Kağan ilk kez senden şüphelerini saklamadan konuşuyor.",
+      "left": {
+        "text": "Kara'yı serbest bırakıp gerçek faili arayalım.",
+        "effects": {
+          "kut": 3,
+          "guven": -1
+        },
+        "state": {
+          "kara_anger": -2,
+          "plot": -1
+        },
+        "next": "kara_return_01"
+      },
+      "right": {
+        "text": "Sahte mühür de onun oyunu olabilir.",
+        "effects": {
+          "guven": 2,
+          "ordu": -2
+        },
+        "state": {
+          "kara_anger": 3,
+          "boy_anger": 2
+        },
+        "next": "kara_return_01"
+      }
+    },
+    {
+      "id": "poison_strikes_01",
+      "year": 684,
+      "season": "İlkbahar",
+      "speaker": "ALTUN HATUN",
+      "text": "Geç kaldık. Kağan kadehten yalnız bir yudum aldı ama zehir güçlüydü. Yaşayabilir; fakat günlerce otağından çıkamayacak. Boylar haberi almadan bir vekil seçilmeli.",
+      "left": {
+        "text": "Altun Hatun divanı yönetsin.",
+        "effects": {
+          "kut": 2,
+          "guven": 1
+        },
+        "state": {
+          "altun_influence": 3,
+          "arslan_support": 2
+        },
+        "next": "succession_shadow_01"
+      },
+      "right": {
+        "text": "Kara Yabgu düzeni sağlasın.",
+        "effects": {
+          "ordu": 3,
+          "kut": -3
+        },
+        "state": {
+          "kara_power": 4,
+          "arslan_support": -2
+        },
+        "next": "succession_shadow_01"
+      }
+    },
+    {
+      "id": "kara_return_01",
+      "year": 684,
+      "season": "İlkbahar",
+      "speaker": "KARA YABGU",
+      "text": "Beni hain ilan edenler şimdi sustu. Ama batı boyları öfkeli. Onları ben yatıştırabilirim; karşılığında sözümün ağırlığını tanıyacaksın.",
+      "left": {
+        "text": "Batıyı yatıştır. Yetkin sınırlı olacak.",
+        "effects": {
+          "ordu": 2,
+          "halk": 2
+        },
+        "state": {
+          "kara_power": 2,
+          "kara_anger": -1,
+          "boy_anger": -2
+        },
+        "next": "bayir_uprising_01"
+      },
+      "right": {
+        "text": "Bu fırsatçılık. Yetki yok.",
+        "effects": {
+          "kut": 2
+        },
+        "state": {
+          "kara_anger": 3,
+          "boy_anger": 2
+        },
+        "next": "bayir_uprising_01"
+      }
+    },
+    {
+      "id": "succession_shadow_01",
+      "year": 684,
+      "season": "İlkbahar",
+      "speaker": "AK BÖRÜ",
+      "text": "Kağan nefes alıyor ama gölgesi kısaldı. Şimdi herkes Arslan Tegin'in adını fısıldıyor. Taht boşalmadan veraset savaşı başladı.",
+      "left": {
+        "text": "Arslan Tegin'i açıkça destekle.",
+        "effects": {
+          "kut": 2,
+          "guven": -1
+        },
+        "state": {
+          "arslan_support": 4,
+          "kara_anger": 2
+        },
+        "next": "bayir_uprising_01"
+      },
+      "right": {
+        "text": "Kağan yaşarken varis konuşulmaz.",
+        "effects": {
+          "guven": 2
+        },
+        "state": {
+          "arslan_support": -2,
+          "plot": 1
+        },
+        "next": "bayir_uprising_01"
+      }
+    },
+    {
+      "id": "bayir_uprising_01",
+      "year": 684,
+      "season": "Yaz",
+      "speaker": "ALP ŞAD",
+      "text": "Bayır sancakları kalktı. Üç oba vergi memurlarını kovdu. Daha kötüsü, isyancılar 'Kara Yabgu bizi koruyacak' diye bağırıyor.",
+      "left": {
+        "text": "Alp Şad orduyu toplasın.",
+        "effects": {
+          "ordu": 3,
+          "hazine": -4
+        },
+        "state": {
+          "alp_loyalty": 1
+        },
+        "next": [
+          {
+            "when": {
+              "key": "alp_loyalty",
+              "lte": -2
+            },
+            "id": "alp_betrayal_01"
+          },
+          {
+            "id": "kara_choice_01"
+          }
+        ]
+      },
+      "right": {
+        "text": "Önce elçi gönder. Kan dökülmesin.",
+        "effects": {
+          "halk": 3,
+          "kut": -1
+        },
+        "state": {
+          "boy_anger": -1
+        },
+        "next": [
+          {
+            "when": {
+              "all": [
+                {
+                  "key": "kara_anger",
+                  "gte": 4
+                },
+                {
+                  "key": "kara_power",
+                  "gte": 2
+                }
+              ]
+            },
+            "id": "kara_rebellion_01"
+          },
+          {
+            "id": "kara_choice_01"
+          }
+        ]
+      }
+    },
+    {
+      "id": "alp_betrayal_01",
+      "year": 684,
+      "season": "Yaz",
+      "speaker": "ALP ŞAD",
+      "text": "Ordu yürüyüşe hazırlanırken Alp Şad otağına geldi. Kılıcını yere bıraktı: 'Beni aylarca hain sandınız. Şimdi senden emir almam. Arslan Tegin için hareket edeceğim.' Dışarıda onun askerleri bekliyor.",
+      "left": {
+        "text": "Arslan adına hareket etmesine izin ver.",
+        "effects": {
+          "ordu": 4,
+          "guven": -3
+        },
+        "state": {
+          "arslan_support": 3,
+          "plot": 1
+        },
+        "next": "battle_climax_01"
+      },
+      "right": {
+        "text": "Tutuklayın.",
+        "effects": {
+          "ordu": -10,
+          "kut": -3
+        },
+        "state": {
+          "plot": 3
+        },
+        "next": "battle_climax_01"
+      }
+    },
+    {
+      "id": "kara_rebellion_01",
+      "year": 684,
+      "season": "Yaz",
+      "speaker": "KARA YABGU",
+      "text": "Kara Yabgu kendi sancağını açtı. 'Ben isyan etmedim,' diyor, 'merkez çöktü. Boyları ben koruyacağım.' Batının yarısı onun arkasında.",
+      "left": {
+        "text": "Üzerine yürü.",
+        "effects": {
+          "ordu": -5,
+          "hazine": -5
+        },
+        "state": {
+          "kara_anger": 2,
+          "boy_anger": 2
+        },
+        "next": "battle_climax_01"
+      },
+      "right": {
+        "text": "Toy çağır. Son kez konuşalım.",
+        "effects": {
+          "kut": -2,
+          "halk": 2
+        },
+        "state": {
+          "kara_power": 1,
+          "plot": -1
+        },
+        "next": "battle_climax_01"
+      }
+    },
+    {
+      "id": "kara_choice_01",
+      "year": 684,
+      "season": "Yaz",
+      "speaker": "KARA YABGU",
+      "text": "Kara Yabgu isyancı obaların önünde tek başına belirdi. 'Beni suçladın, yine de kan dökülmesini istemiyorum. Yetki ver; sancakları indiririm.' Bu teklif gerçek de olabilir, tuzak da.",
+      "left": {
+        "text": "Yetkiyi ver. İsyanı bitir.",
+        "effects": {
+          "halk": 4,
+          "kut": -3
+        },
+        "state": {
+          "kara_power": 4,
+          "kara_anger": -2
+        },
+        "next": "battle_climax_01"
+      },
+      "right": {
+        "text": "Hayır. Bu devlet pazarlıkla yönetilmez.",
+        "effects": {
+          "kut": 3,
+          "ordu": -2
+        },
+        "state": {
+          "kara_anger": 3,
+          "boy_anger": 2
+        },
+        "next": "battle_climax_01"
+      }
+    },
+    {
+      "id": "battle_climax_01",
+      "year": 684,
+      "season": "Sonbahar",
+      "speaker": "BÖRÜ KAĞAN",
+      "text": "Kağan zırhını giydi. 'Bu düğümü ben çözeceğim. Ordunun başında çıkıyorum.' Zehirden yeni kalktıysa bile kimse onu durduramıyor. Son söz senin.",
+      "left": {
+        "text": "Kağan önde yürüsün.",
+        "effects": {
+          "ordu": 5,
+          "kut": 4
+        },
+        "next": [
+          {
+            "when": {
+              "any": [
+                {
+                  "key": "plot",
+                  "gte": 5
+                },
+                {
+                  "key": "alp_loyalty",
+                  "lte": -3
+                },
+                {
+                  "source": "stats",
+                  "key": "ordu",
+                  "lte": 42
+                }
+              ]
+            },
+            "id": "kagan_falls_01"
+          },
+          {
+            "id": "kagan_survives_final_01"
+          }
+        ]
+      },
+      "right": {
+        "text": "Kağan merkezde kalsın. Orduyu ben yönlendireceğim.",
+        "effects": {
+          "guven": -4,
+          "kut": -1
+        },
+        "next": [
+          {
+            "when": {
+              "all": [
+                {
+                  "key": "kara_power",
+                  "gte": 5
+                },
+                {
+                  "key": "kara_anger",
+                  "gte": 3
+                }
+              ]
+            },
+            "id": "kara_takes_capital_01"
+          },
+          {
+            "when": {
+              "key": "arslan_support",
+              "gte": 4
+            },
+            "id": "arslan_rises_01"
+          },
+          {
+            "id": "cold_peace_01"
+          }
+        ]
+      }
+    },
+    {
+      "id": "kagan_falls_01",
+      "year": 684,
+      "season": "Sonbahar",
+      "speaker": "ALTUN HATUN",
+      "text": "Savaş kazanıldı ama Kağan dönmedi. Bir ok zırhının altından girdi. Ölmeden önce yalnızca 'Töreyi koru' diyebildi. Şimdi bütün gözler Arslan Tegin'e ve sana çevrildi.",
+      "left": {
+        "text": "YENİDEN BAŞLA"
+      },
+      "right": {
+        "text": "ANA MENÜ"
+      },
+      "ending": true,
+      "ending_title": "SON: KAĞAN DÜŞTÜ — VERASET KRİZİ BAŞLADI"
+    },
+    {
+      "id": "kagan_survives_final_01",
+      "year": 684,
+      "season": "Sonbahar",
+      "speaker": "BÖRÜ KAĞAN",
+      "text": "İsyan dağıldı. Kağan sağ döndü. Esirlerin arasında zehirli kadehte kullanılan yabancı gümüşler bulundu. Kara Yabgu suçsuz değildi; ama zehir onun işi de değildi. Sarayda hâlâ biri var.",
+      "left": {
+        "text": "YENİDEN BAŞLA"
+      },
+      "right": {
+        "text": "ANA MENÜ"
+      },
+      "ending": true,
+      "ending_title": "SON: İSYAN BİTTİ — AMA GERÇEK HAİN BULUNAMADI"
+    },
+    {
+      "id": "kara_takes_capital_01",
+      "year": 684,
+      "season": "Sonbahar",
+      "speaker": "KARA YABGU",
+      "text": "Sen orduyu sınırda tutarken Kara Yabgu başkente girdi. Kapılar ona içeriden açıldı. Kağan tahttan inmedi; fakat artık herkes kimin güçlü olduğunu biliyor.",
+      "left": {
+        "text": "YENİDEN BAŞLA"
+      },
+      "right": {
+        "text": "ANA MENÜ"
+      },
+      "ending": true,
+      "ending_title": "SON: TAHT DURUYOR — İKTİDAR EL DEĞİŞTİRDİ"
+    },
+    {
+      "id": "arslan_rises_01",
+      "year": 684,
+      "season": "Sonbahar",
+      "speaker": "ALTUN HATUN",
+      "text": "Kağan otağında kaldı. Boylar Arslan Tegin'in çevresinde toplandı. İlk kez bir savaş olmadan yeni bir güç doğdu. Kağan ya oğlunu kabul edecek ya da kendi hanedanıyla savaşacak.",
+      "left": {
+        "text": "YENİDEN BAŞLA"
+      },
+      "right": {
+        "text": "ANA MENÜ"
+      },
+      "ending": true,
+      "ending_title": "SON: ARSLAN TEGİN YÜKSELİYOR"
+    },
+    {
+      "id": "cold_peace_01",
+      "year": 684,
+      "season": "Kış",
+      "speaker": "AK BÖRÜ",
+      "text": "Sancaklar indi, kılıçlar kınına girdi. Ama hiçbir sorun gerçekten çözülmedi. Kara Yabgu susuyor, Alp Şad uzak duruyor, Altun Hatun oğlunu koruyor. Bu barış yalnızca bir sonraki fırtınanın sessizliği.",
+      "left": {
+        "text": "YENİDEN BAŞLA"
+      },
+      "right": {
+        "text": "ANA MENÜ"
+      },
+      "ending": true,
+      "ending_title": "SON: SOĞUK BARIŞ"
     }
-  }
-]
+  ]
+}
