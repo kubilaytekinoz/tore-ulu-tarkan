@@ -595,14 +595,23 @@
         "next": [
           {
             "when": {
-              "all": [
+              "any": [
                 {
-                  "key": "kara_anger",
-                  "gte": 4
+                  "all": [
+                    {
+                      "key": "kara_anger",
+                      "gte": 4
+                    },
+                    {
+                      "key": "kara_power",
+                      "gte": 2
+                    }
+                  ]
                 },
                 {
-                  "key": "kara_power",
-                  "gte": 2
+                  "source": "stats",
+                  "key": "halk",
+                  "lte": 35
                 }
               ]
             },
@@ -795,6 +804,14 @@
               ]
             },
             "id": "kara_takes_capital_01"
+          },
+          {
+            "when": {
+              "source": "stats",
+              "key": "guven",
+              "lte": 34
+            },
+            "id": "kagan_falls_01"
           },
           {
             "when": {
