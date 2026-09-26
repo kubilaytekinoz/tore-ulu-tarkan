@@ -1,0 +1,100 @@
+[
+  {
+    "id": "bayir_tax_01",
+    "speaker": "BÖRÜ KAĞAN",
+    "text": "Tarkan, batıdaki Bayır boyu kış yüzünden vergisini gönderemeyeceğini bildirdi.",
+    "left": {
+      "text": "Bir mevsim süre verelim.",
+      "effects": {
+        "halk": 4,
+        "kut": 2,
+        "hazine": -5
+      }
+    },
+    "right": {
+      "text": "Vergi töredir. Toplansın.",
+      "effects": {
+        "hazine": 6,
+        "halk": -3
+      }
+    }
+  },
+  {
+    "id": "altun_advice_01",
+    "speaker": "ALTUN HATUN",
+    "text": "Kağan son günlerde yalnızca askerlerle konuşuyor. Boy beylerini de dinlemesi gerektiğini düşünüyorum.",
+    "left": {
+      "text": "Kağan'a bunu söyleyeceğim.",
+      "effects": {
+        "guven": -1,
+        "kut": 2
+      }
+    },
+    "right": {
+      "text": "Kağan ne yaptığını bilir.",
+      "effects": {
+        "guven": 3,
+        "halk": -2
+      }
+    }
+  },
+  {
+    "id": "alp_sad_border_01",
+    "speaker": "ALP ŞAD",
+    "text": "Doğudaki sınırda yabancı atlılar görüldü. Yüz süvariyle keşfe çıkmak için izin istiyorum.",
+    "left": {
+      "text": "Git. Ama çatışmaya girme.",
+      "effects": {
+        "ordu": 5,
+        "hazine": -2
+      }
+    },
+    "right": {
+      "text": "Şimdilik sınırı güçlendirelim.",
+      "effects": {
+        "ordu": 3,
+        "hazine": -4,
+        "halk": 1
+      }
+    }
+  },
+  {
+    "id": "kara_yabgu_01",
+    "speaker": "BAYIR BEYİ",
+    "text": "Ulu Tarkan, Kara Yabgu'nun otağında son günlerde çok sayıda savaşçı toplandığı söyleniyor.",
+    "left": {
+      "text": "Kağan'a hemen söyle.",
+      "effects": {
+        "guven": 4,
+        "kut": -2
+      }
+    },
+    "right": {
+      "text": "Önce kendimiz araştıralım.",
+      "effects": {
+        "guven": -2,
+        "hazine": -1
+      }
+    }
+  },
+  {
+    "id": "winter_01",
+    "speaker": "ULAK",
+    "text": "Tarkan! Kuzeydeki sürülerin bir kısmı soğuktan telef oldu. Halk erzak bekliyor.",
+    "left": {
+      "text": "Hazineyi açın. Halk aç kalmasın.",
+      "effects": {
+        "hazine": -12,
+        "halk": 8,
+        "kut": 5
+      }
+    },
+    "right": {
+      "text": "Boylar kendi sürülerini korumalıydı.",
+      "effects": {
+        "halk": -8,
+        "kut": -3
+      }
+    }
+  }
+]
