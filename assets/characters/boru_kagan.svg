@@ -1,82 +1,128 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900">
 <defs>
-  <radialGradient id="bg" cx="50%" cy="36%" r="78%">
-    <stop offset="0" stop-color="#543923"/>
-    <stop offset=".36" stop-color="#211d1a"/>
+  <radialGradient id="tent" cx="52%" cy="34%" r="78%">
+    <stop offset="0" stop-color="#513720"/>
+    <stop offset=".38" stop-color="#211c19"/>
     <stop offset="1" stop-color="#070b10"/>
   </radialGradient>
+  <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#c58a63"/>
+    <stop offset=".55" stop-color="#9c654c"/>
+    <stop offset="1" stop-color="#6d4338"/>
+  </linearGradient>
   <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1">
-    <stop stop-color="#aa9882"/><stop offset=".35" stop-color="#66584a"/><stop offset="1" stop-color="#23211f"/>
+    <stop stop-color="#c5b39a"/>
+    <stop offset=".35" stop-color="#796957"/>
+    <stop offset="1" stop-color="#292622"/>
   </linearGradient>
-  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-    <stop stop-color="#f2d28c"/><stop offset=".38" stop-color="#b98542"/><stop offset="1" stop-color="#5d3b1d"/>
+  <linearGradient id="iron" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#515961"/>
+    <stop offset=".5" stop-color="#272c31"/>
+    <stop offset="1" stop-color="#0e1216"/>
   </linearGradient>
-  <linearGradient id="armor" x1="0" y1="0" x2="0" y2="1">
-    <stop stop-color="#31343a"/><stop offset="1" stop-color="#101318"/>
+  <linearGradient id="bronze" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#e0b968"/>
+    <stop offset=".45" stop-color="#9c6d32"/>
+    <stop offset="1" stop-color="#533517"/>
   </linearGradient>
-  <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+  <filter id="blur"><feGaussianBlur stdDeviation="20"/></filter>
 </defs>
-<rect width="720" height="900" fill="url(#bg)"/>
 
-<!-- otağ ambience -->
-<circle cx="610" cy="235" r="108" fill="#d98236" opacity=".23" filter="url(#soft)"/>
-<circle cx="112" cy="260" r="82" fill="#c06d2c" opacity=".16" filter="url(#soft)"/>
-<path d="M58 0h78v640H58zM584 0h78v640h-78z" fill="#0b1118" opacity=".74"/>
-<g fill="#b98a43" opacity=".65">
-  <path d="M96 72l28 32-28 32-28-32z"/><path d="M624 72l28 32-28 32-28-32z"/>
-  <path d="M96 166l18 22-18 22-18-22z"/><path d="M624 166l18 22-18 22-18-22z"/>
+<!-- OTAĞ -->
+<rect width="720" height="900" fill="url(#tent)"/>
+<circle cx="602" cy="230" r="108" fill="#e1873f" opacity=".22" filter="url(#blur)"/>
+<circle cx="116" cy="285" r="92" fill="#c56a2f" opacity=".15" filter="url(#blur)"/>
+<path d="M42 0h112v680H42zM566 0h112v680H566z" fill="#080d12" opacity=".78"/>
+<g fill="#ba8e4a" opacity=".42">
+  <path d="M98 82l30 35-30 35-30-35z"/>
+  <path d="M622 82l30 35-30 35-30-35z"/>
+  <path d="M98 192l18 22-18 22-18-22z"/>
+  <path d="M622 192l18 22-18 22-18-22z"/>
 </g>
-<path d="M88 0l32 0v620H88zM600 0h32v620h-32z" fill="#05090d" opacity=".9"/>
-<path d="M97 84v388M623 84v388" stroke="#8c693a" stroke-width="4" opacity=".55"/>
+<g stroke="#8b6738" stroke-width="5" opacity=".58">
+  <path d="M96 42v470"/>
+  <path d="M624 42v470"/>
+</g>
 
-<!-- throne -->
-<path d="M196 900V610c0-88 73-160 164-160s164 72 164 160v290z" fill="#11161c" stroke="#61472a" stroke-width="7"/>
-<path d="M165 900V705c0-118 85-205 195-205s195 87 195 205v195z" fill="#171b21"/>
+<!-- throne silhouette -->
+<path d="M140 900V690c0-150 88-258 220-258s220 108 220 258v210z" fill="#12171c" stroke="#5f4528" stroke-width="8"/>
 
-<!-- shoulders / fur -->
-<path d="M78 900c20-205 123-333 247-367l35 62 35-62c132 38 225 166 247 367H78z" fill="url(#fur)"/>
-<path d="M130 900c32-170 100-264 190-304l40 45 40-45c96 43 163 140 190 304H130z" fill="url(#armor)" stroke="#9b7139" stroke-width="5"/>
+<!-- shoulders / fur cloak -->
+<path d="M54 900c25-206 125-339 266-385l40 57 40-57c144 47 242 180 266 385H54z" fill="url(#fur)"/>
+<path d="M114 900c26-164 102-270 206-318l40 44 40-44c111 50 183 157 206 318H114z" fill="url(#iron)" stroke="#8d6631" stroke-width="6"/>
+
+<!-- lamellar armor -->
+<g fill="#252a2f" stroke="#b07c38" stroke-width="3">
+  <path d="M248 610l44 10-9 74-46-10z"/>
+  <path d="M296 621l44 7-4 74-47-8z"/>
+  <path d="M344 628h32v76h-32z"/>
+  <path d="M380 628l44-7 7 73-47 8z"/>
+  <path d="M428 620l44-10 11 74-46 10z"/>
+  <path d="M230 692l49 12-10 78-51-13z"/>
+  <path d="M284 706l48 7-5 78-50-9z"/>
+  <path d="M338 714h44v80h-44z"/>
+  <path d="M388 713l48-7 7 76-50 9z"/>
+  <path d="M442 704l49-12 12 77-51 13z"/>
+</g>
 
 <!-- neck -->
-<path d="M317 438h86v110h-86z" fill="#8c5a43"/>
+<path d="M321 430h78v126h-78z" fill="#865441"/>
 
-<!-- head / hair -->
-<ellipse cx="360" cy="324" rx="112" ry="139" fill="#9e684f"/>
-<path d="M246 324c2-128 52-205 114-205 70 0 118 78 114 208-37-42-78-62-122-63-43-1-77 14-106 60z" fill="#121317"/>
-<path d="M254 322c-10 105 7 180 41 226l65 39 65-39c36-49 52-124 41-227-18 48-54 75-106 75-51 0-87-27-106-74z" fill="#111318"/>
+<!-- hair -->
+<path d="M245 318c0-138 49-219 115-219 68 0 117 84 115 223l-31 40H276z" fill="#111317"/>
+<path d="M261 335c-16 117 6 183 36 228l63 36 63-36c34-48 53-117 36-228z" fill="#15171a"/>
 
-<!-- face shadow planes -->
-<path d="M286 301c21-18 43-28 68-29-9 19-18 33-31 44-16 13-31 16-45 10z" fill="#c48a62"/>
-<path d="M434 301c-21-18-43-28-68-29 9 19 18 33 31 44 16 13 31 16 45 10z" fill="#c48a62"/>
-<path d="M327 340c18 12 46 12 66 0-4 30-15 47-33 47-18 0-29-17-33-47z" fill="#6f4137" opacity=".72"/>
-<path d="M304 406c28 19 84 20 112 0-8 58-28 90-56 90s-48-32-56-90z" fill="#0d0f12"/>
-<path d="M311 409c25 10 72 10 98 0-11 18-27 29-49 29-22 0-38-11-49-29z" fill="#30211e"/>
+<!-- face -->
+<path d="M268 266c24-60 55-89 92-89 40 0 72 30 94 91l-10 128c-8 91-38 138-84 138s-76-47-84-138z" fill="url(#skin)"/>
+
+<!-- Göktürk inspired fur/leather cap, not crown -->
+<path d="M244 238c8-92 49-154 116-154s108 62 116 154l-35 22c-53-22-109-22-162 0z" fill="#26211c" stroke="url(#bronze)" stroke-width="7"/>
+<path d="M274 187c28-25 57-38 86-38 31 0 60 13 87 38l-8 43c-53-18-105-18-158 0z" fill="#3d3026"/>
+<path d="M249 228c73-24 149-24 222 0" fill="none" stroke="#d2aa5b" stroke-width="10"/>
+<path d="M348 211l12-31 12 31-12 18z" fill="#d8b462"/>
+<path d="M256 239l-24 78 35 17 17-79zM464 239l24 78-35 17-17-79z" fill="#30251e" stroke="#8e6635" stroke-width="4"/>
+
+<!-- eyebrows -->
+<path d="M292 310c20-13 41-16 63-7" fill="none" stroke="#231917" stroke-width="10" stroke-linecap="round"/>
+<path d="M365 303c22-9 43-6 63 7" fill="none" stroke="#231917" stroke-width="10" stroke-linecap="round"/>
 
 <!-- eyes -->
-<path d="M292 326c16-8 35-8 54 0-16 7-34 8-54 0zM374 326c18-8 37-8 54 0-19 8-37 7-54 0z" fill="#17191c"/>
+<path d="M299 329c18-9 37-9 55 0-18 9-37 9-55 0z" fill="#151619"/>
+<path d="M366 329c18-9 37-9 55 0-18 9-37 9-55 0z" fill="#151619"/>
+<circle cx="328" cy="328" r="4" fill="#d9c7a7"/>
+<circle cx="392" cy="328" r="4" fill="#d9c7a7"/>
 
-<!-- crown -->
-<path d="M238 210l38-95 49 48 35-88 35 88 49-48 38 95-35 48H273z" fill="url(#gold)" stroke="#f0d08a" stroke-width="5"/>
-<path d="M269 214h182l-24 29H293z" fill="#7b552a"/>
-<circle cx="360" cy="165" r="26" fill="#15202b" stroke="#e2c276" stroke-width="7"/>
-<path d="M350 147l10-20 10 20-10 11z" fill="#e2c276"/>
+<!-- nose -->
+<path d="M354 333c-8 40-10 63 6 72 14-5 18-12 20-22" fill="none" stroke="#704238" stroke-width="6" stroke-linecap="round"/>
 
-<!-- cheek / beard details -->
-<path d="M266 353c23 33 44 50 65 61M454 353c-23 33-44 50-65 61" stroke="#17181b" stroke-width="13" stroke-linecap="round" opacity=".88"/>
-<path d="M307 423c18 61 34 99 53 117 19-18 36-56 53-117" fill="#111318"/>
+<!-- long Turkic moustache -->
+<path d="M356 408c-33-18-64-18-92-1 27 4 45 15 62 31 13-1 25-8 34-21z" fill="#171416"/>
+<path d="M364 408c33-18 64-18 92-1-27 4-45 15-62 31-13-1-25-8-34-21z" fill="#171416"/>
+<path d="M326 430c-18 15-38 30-58 35 23 5 47-1 69-19zM394 430c18 15 38 30 58 35-23 5-47-1-69-19z" fill="#171416"/>
 
-<!-- armor ornament -->
-<path d="M249 603c73 32 149 32 222 0" fill="none" stroke="#c19554" stroke-width="7"/>
-<path d="M227 700c88 35 178 35 266 0" fill="none" stroke="#86602f" stroke-width="5"/>
-<circle cx="360" cy="648" r="56" fill="#18212a" stroke="url(#gold)" stroke-width="10"/>
-<path d="M333 670l27-52 27 52-27 17z" fill="none" stroke="#d6b36d" stroke-width="7"/>
+<!-- short beard -->
+<path d="M300 442c13 77 33 118 60 127 28-10 48-51 60-127-18 16-38 24-60 24s-42-8-60-24z" fill="#181719"/>
+<path d="M324 452c10 47 22 74 36 81 14-7 27-34 36-81-12 9-24 13-36 13s-24-4-36-13z" fill="#2b211f"/>
 
-<!-- fur highlights -->
-<g fill="none" stroke="#cab99f" stroke-width="7" opacity=".55">
-  <path d="M122 672c67-74 118-99 166-118"/><path d="M598 672c-66-74-117-99-165-118"/>
-  <path d="M98 760c80-80 139-105 191-123"/><path d="M622 760c-78-80-138-105-190-123"/>
-</g>
+<!-- cheek shadows / stern planes -->
+<path d="M283 351c15 26 31 39 49 43" fill="none" stroke="#7b4b3e" stroke-width="7" opacity=".55"/>
+<path d="M437 351c-15 26-31 39-49 43" fill="none" stroke="#7b4b3e" stroke-width="7" opacity=".55"/>
 
-<!-- bottom cinematic fade -->
-<rect y="738" width="720" height="162" fill="#05080d" opacity=".34"/>
+<!-- fur collar -->
+<path d="M156 622c40-93 97-132 157-142l47 78 47-78c64 12 120 54 157 142l-88-35-34 43-82-52-82 52-35-43z" fill="url(#fur)" stroke="#5f5143" stroke-width="4"/>
+
+<!-- chest medallion -->
+<circle cx="360" cy="660" r="56" fill="#182028" stroke="url(#bronze)" stroke-width="10"/>
+<circle cx="360" cy="660" r="37" fill="#0e141a" stroke="#b88943" stroke-width="4"/>
+<path d="M333 676l27-54 27 54-27 15z" fill="none" stroke="#d7b66b" stroke-width="7"/>
+<path d="M345 650h30" stroke="#d7b66b" stroke-width="5"/>
+
+<!-- belt -->
+<path d="M196 796c109 32 219 32 328 0" fill="none" stroke="#171b1f" stroke-width="50"/>
+<path d="M196 796c109 32 219 32 328 0" fill="none" stroke="#ad7b39" stroke-width="6"/>
+<rect x="326" y="780" width="68" height="54" rx="10" fill="#202830" stroke="#d0a65d" stroke-width="6"/>
+<path d="M344 806h32" stroke="#d0a65d" stroke-width="5"/>
+
+<!-- cinematic fade -->
+<rect y="770" width="720" height="130" fill="#04070a" opacity=".28"/>
 </svg>
