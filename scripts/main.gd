@@ -17,7 +17,7 @@ const ORDU_FILL: Color = Color("#c96d69")
 const HAZINE_FILL: Color = Color("#7aa8be")
 
 const CHARACTER_PORTRAITS: Dictionary = {
-    "BÖRÜ KAĞAN": "res://assets/characters/boru_kagan_main.webp",
+    "BÖRÜ KAĞAN": "res://assets/characters/boru_kagan_v2.webp",
     "ALTUN HATUN": "res://assets/characters/altun_hatun_main.webp",
     "ALP ŞAD": "res://assets/characters/alp_shad_main.webp",
     "KARA YABGU": "res://assets/characters/kara_yabgu_main.webp",
@@ -52,6 +52,10 @@ var right_button: Button
 var portrait: TextureRect
 var ruler_name: Label
 var ruler_desc: Label
+var intro_overlay: Control
+var intro_title: Label
+var intro_text: Label
+var intro_button: Button
 
 func _ready() -> void:
     _build_background()
@@ -317,7 +321,7 @@ func _build_game() -> void:
     portrait_panel.add_child(portrait_stack)
 
     portrait = TextureRect.new()
-    portrait.texture = load("res://assets/characters/boru_kagan_main.webp") as Texture2D
+    portrait.texture = load("res://assets/characters/boru_kagan_v2.webp") as Texture2D
     portrait.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
     portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
@@ -413,6 +417,117 @@ func _build_game() -> void:
     right_button.pressed.connect(func() -> void: _choose("right"))
     choices.add_child(right_button)
 
+    _build_intro()
+
+func _build_intro() -> void:
+    intro_overlay = Control.new()
+    intro_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    intro_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+    intro_overlay.z_index = 100
+    intro_overlay.visible = false
+    game_layer.add_child(intro_overlay)
+
+    var shade: ColorRect = ColorRect.new()
+    shade.color = Color(0.01, 0.015, 0.02, 0.94)
+    shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    shade.mouse_filter = Control.MOUSE_FILTER_STOP
+    intro_overlay.add_child(shade)
+
+    var center: CenterContainer = CenterContainer.new()
+    center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    intro_overlay.add_child(center)
+
+    var intro_panel: PanelContainer = PanelContainer.new()
+    intro_panel.custom_minimum_size = Vector2(860, 760)
+    intro_panel.add_theme_stylebox_override("panel", _panel_style(Color("#081019f2"), GOLD, 2, 24))
+    center.add_child(intro_panel)
+
+    var pad: MarginContainer = MarginContainer.new()
+    pad.add_theme_constant_override("margin_left", 64)
+    pad.add_theme_constant_override("margin_right", 64)
+    pad.add_theme_constant_override("margin_top", 54)
+    pad.add_theme_constant_override("margin_bottom", 54)
+    intro_panel.add_child(pad)
+
+    var col: VBoxContainer = VBoxContainer.new()
+    col.alignment = BoxContainer.ALIGNMENT_CENTER
+    col.add_theme_constant_override("separation", 24)
+    pad.add_child(col)
+
+    var emblem_wrap: CenterContainer = CenterContainer.new()
+    emblem_wrap.custom_minimum_size = Vector2(0, 110)
+    col.add_child(emblem_wrap)
+
+    var emblem: TextureRect = TextureRect.new()
+    emblem.texture = load("res://assets/ui/wolf_emblem.svg") as Texture2D
+    emblem.custom_minimum_size = Vector2(96, 96)
+    emblem.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+    emblem.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+    emblem_wrap.add_child(emblem)
+
+    var era: Label = Label.new()
+    era.text = "682  •  SONBAHAR"
+    era.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    era.add_theme_font_size_override("font_size", 20)
+    era.add_theme_color_override("font_color", GOLD)
+    col.add_child(era)
+
+    intro_title = Label.new()
+    intro_title.text = "HOŞ GELDİN, ULU TARKAN"
+    intro_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    intro_title.add_theme_font_size_override("font_size", 46)
+    intro_title.add_theme_color_override("font_color", GOLD_BRIGHT)
+    col.add_child(intro_title)
+
+    var divider: HSeparator = HSeparator.new()
+    divider.add_theme_color_override("separator", Color("#72572f"))
+    col.add_child(divider)
+
+    intro_text = Label.new()
+    intro_text.text = "Beylik seni bekler.\n\nKağana yol göstermek, oba gütmek ve boyları bir arada tutmak kolay değildir.\n\nBir sözün savaşı başlatabilir; bir kararın açlığı dindirebilir. Dost bildiğin bey düşmana, kuşku duyduğun kişi en sadık yoldaşına dönüşebilir.\n\nKağanlar değişir. Töre kalır."
+    intro_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    intro_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    intro_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    intro_text.add_theme_font_size_override("font_size", 27)
+    intro_text.add_theme_color_override("font_color", TEXT)
+    intro_text.custom_minimum_size = Vector2(700, 330)
+    col.add_child(intro_text)
+
+    intro_button = Button.new()
+    intro_button.text = "TÖREYE ADIM AT"
+    intro_button.custom_minimum_size = Vector2(0, 104)
+    intro_button.add_theme_font_size_override("font_size", 25)
+    _style_button(intro_button, Color("#15382e"), GOLD_BRIGHT, GOLD)
+    intro_button.pressed.connect(_dismiss_intro)
+    col.add_child(intro_button)
+
+func _play_intro() -> void:
+    intro_overlay.visible = true
+    intro_overlay.modulate = Color(1, 1, 1, 0)
+    intro_title.modulate = Color(1, 1, 1, 0)
+    intro_text.modulate = Color(1, 1, 1, 0)
+    intro_button.modulate = Color(1, 1, 1, 0)
+    intro_button.disabled = true
+
+    var tween: Tween = create_tween()
+    tween.tween_property(intro_overlay, "modulate:a", 1.0, 0.35)
+    tween.tween_property(intro_title, "modulate:a", 1.0, 0.45)
+    tween.tween_interval(0.12)
+    tween.tween_property(intro_text, "modulate:a", 1.0, 0.65)
+    tween.tween_interval(0.18)
+    tween.tween_property(intro_button, "modulate:a", 1.0, 0.4)
+    await tween.finished
+    intro_button.disabled = false
+
+func _dismiss_intro() -> void:
+    intro_button.disabled = true
+    var tween: Tween = create_tween()
+    tween.tween_property(intro_overlay, "modulate:a", 0.0, 0.35)
+    await tween.finished
+    intro_overlay.visible = false
+    intro_button.disabled = false
+
 func _load_cards() -> void:
     var file: FileAccess = FileAccess.open("res://data/cards.json", FileAccess.READ)
     if file == null:
@@ -438,6 +553,7 @@ func _start_game() -> void:
     game_layer.visible = true
     _refresh_stats()
     _show_card()
+    _play_intro()
 
 func _show_card() -> void:
     if cards.is_empty():
