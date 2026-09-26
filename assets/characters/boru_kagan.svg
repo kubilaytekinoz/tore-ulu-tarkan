@@ -1,24 +1,82 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 900">
 <defs>
- <radialGradient id="bg" cx=".5" cy=".34" r=".75"><stop stop-color="#4a3628"/><stop offset=".45" stop-color="#201b1a"/><stop offset="1" stop-color="#0b0f13"/></radialGradient>
- <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8d7a68"/><stop offset=".45" stop-color="#4a4037"/><stop offset="1" stop-color="#1f1d1b"/></linearGradient>
- <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0d08a"/><stop offset=".35" stop-color="#93682f"/><stop offset="1" stop-color="#4f3219"/></linearGradient>
+  <radialGradient id="bg" cx="50%" cy="36%" r="78%">
+    <stop offset="0" stop-color="#543923"/>
+    <stop offset=".36" stop-color="#211d1a"/>
+    <stop offset="1" stop-color="#070b10"/>
+  </radialGradient>
+  <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#aa9882"/><stop offset=".35" stop-color="#66584a"/><stop offset="1" stop-color="#23211f"/>
+  </linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#f2d28c"/><stop offset=".38" stop-color="#b98542"/><stop offset="1" stop-color="#5d3b1d"/>
+  </linearGradient>
+  <linearGradient id="armor" x1="0" y1="0" x2="0" y2="1">
+    <stop stop-color="#31343a"/><stop offset="1" stop-color="#101318"/>
+  </linearGradient>
+  <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
 </defs>
 <rect width="720" height="900" fill="url(#bg)"/>
-<circle cx="610" cy="250" r="105" fill="#d6873b" opacity=".22"/>
-<path fill="#151a1d" stroke="#7a5936" stroke-width="6" d="M90 900V690c0-175 120-302 270-302s270 127 270 302v210z"/>
-<path fill="url(#fur)" d="M86 722c32-185 114-276 202-300l72 70 72-70c96 31 173 123 202 300l-95-36-57 214H238l-59-214z"/>
-<path fill="#2b2420" stroke="#b17a38" stroke-width="7" d="M252 470c-24 56-32 139-15 215l123 74 123-74c17-76 9-159-15-215l-108 43z"/>
-<ellipse cx="360" cy="326" rx="116" ry="145" fill="#a96d4d"/>
-<path fill="#171517" d="M249 306c10-115 64-182 132-182 75 0 123 72 125 183-31-33-72-53-118-58-53-6-95 11-139 57z"/>
-<path fill="#161315" d="M285 368c10 78 37 132 75 132s70-57 78-134c-19 25-45 39-78 39-31 0-56-12-75-37z"/>
-<path fill="#251b19" d="M301 373c22 18 41 25 59 25 22 0 42-8 63-27-14 68-34 95-63 95-28 0-47-27-59-93z"/>
-<path fill="url(#metal)" stroke="#e4c67f" stroke-width="5" d="M245 205l37-85 45 39 33-79 33 79 45-39 37 85-38 44H283z"/>
-<circle cx="360" cy="169" r="24" fill="#151a20" stroke="#e2c375" stroke-width="7"/>
-<path fill="#e4c67f" d="M307 326l25 7-17 10zm106 0l-25 7 17 10z"/>
-<path fill="#24181a" d="M333 364c18 8 36 8 54 0-8 21-18 30-27 30-10 0-19-9-27-30z"/>
-<path fill="none" stroke="#d0a55b" stroke-width="6" d="M251 538c72 30 146 30 218 0M238 690c79 31 164 31 244 0"/>
-<circle cx="360" cy="596" r="48" fill="#202932" stroke="url(#metal)" stroke-width="10"/>
-<path fill="none" stroke="#d7b568" stroke-width="7" d="M337 611l23-43 23 43-23 14z"/>
-<path fill="#0d1217" opacity=".7" d="M0 760h720v140H0z"/>
+
+<!-- otağ ambience -->
+<circle cx="610" cy="235" r="108" fill="#d98236" opacity=".23" filter="url(#soft)"/>
+<circle cx="112" cy="260" r="82" fill="#c06d2c" opacity=".16" filter="url(#soft)"/>
+<path d="M58 0h78v640H58zM584 0h78v640h-78z" fill="#0b1118" opacity=".74"/>
+<g fill="#b98a43" opacity=".65">
+  <path d="M96 72l28 32-28 32-28-32z"/><path d="M624 72l28 32-28 32-28-32z"/>
+  <path d="M96 166l18 22-18 22-18-22z"/><path d="M624 166l18 22-18 22-18-22z"/>
+</g>
+<path d="M88 0l32 0v620H88zM600 0h32v620h-32z" fill="#05090d" opacity=".9"/>
+<path d="M97 84v388M623 84v388" stroke="#8c693a" stroke-width="4" opacity=".55"/>
+
+<!-- throne -->
+<path d="M196 900V610c0-88 73-160 164-160s164 72 164 160v290z" fill="#11161c" stroke="#61472a" stroke-width="7"/>
+<path d="M165 900V705c0-118 85-205 195-205s195 87 195 205v195z" fill="#171b21"/>
+
+<!-- shoulders / fur -->
+<path d="M78 900c20-205 123-333 247-367l35 62 35-62c132 38 225 166 247 367H78z" fill="url(#fur)"/>
+<path d="M130 900c32-170 100-264 190-304l40 45 40-45c96 43 163 140 190 304H130z" fill="url(#armor)" stroke="#9b7139" stroke-width="5"/>
+
+<!-- neck -->
+<path d="M317 438h86v110h-86z" fill="#8c5a43"/>
+
+<!-- head / hair -->
+<ellipse cx="360" cy="324" rx="112" ry="139" fill="#9e684f"/>
+<path d="M246 324c2-128 52-205 114-205 70 0 118 78 114 208-37-42-78-62-122-63-43-1-77 14-106 60z" fill="#121317"/>
+<path d="M254 322c-10 105 7 180 41 226l65 39 65-39c36-49 52-124 41-227-18 48-54 75-106 75-51 0-87-27-106-74z" fill="#111318"/>
+
+<!-- face shadow planes -->
+<path d="M286 301c21-18 43-28 68-29-9 19-18 33-31 44-16 13-31 16-45 10z" fill="#c48a62"/>
+<path d="M434 301c-21-18-43-28-68-29 9 19 18 33 31 44 16 13 31 16 45 10z" fill="#c48a62"/>
+<path d="M327 340c18 12 46 12 66 0-4 30-15 47-33 47-18 0-29-17-33-47z" fill="#6f4137" opacity=".72"/>
+<path d="M304 406c28 19 84 20 112 0-8 58-28 90-56 90s-48-32-56-90z" fill="#0d0f12"/>
+<path d="M311 409c25 10 72 10 98 0-11 18-27 29-49 29-22 0-38-11-49-29z" fill="#30211e"/>
+
+<!-- eyes -->
+<path d="M292 326c16-8 35-8 54 0-16 7-34 8-54 0zM374 326c18-8 37-8 54 0-19 8-37 7-54 0z" fill="#17191c"/>
+
+<!-- crown -->
+<path d="M238 210l38-95 49 48 35-88 35 88 49-48 38 95-35 48H273z" fill="url(#gold)" stroke="#f0d08a" stroke-width="5"/>
+<path d="M269 214h182l-24 29H293z" fill="#7b552a"/>
+<circle cx="360" cy="165" r="26" fill="#15202b" stroke="#e2c276" stroke-width="7"/>
+<path d="M350 147l10-20 10 20-10 11z" fill="#e2c276"/>
+
+<!-- cheek / beard details -->
+<path d="M266 353c23 33 44 50 65 61M454 353c-23 33-44 50-65 61" stroke="#17181b" stroke-width="13" stroke-linecap="round" opacity=".88"/>
+<path d="M307 423c18 61 34 99 53 117 19-18 36-56 53-117" fill="#111318"/>
+
+<!-- armor ornament -->
+<path d="M249 603c73 32 149 32 222 0" fill="none" stroke="#c19554" stroke-width="7"/>
+<path d="M227 700c88 35 178 35 266 0" fill="none" stroke="#86602f" stroke-width="5"/>
+<circle cx="360" cy="648" r="56" fill="#18212a" stroke="url(#gold)" stroke-width="10"/>
+<path d="M333 670l27-52 27 52-27 17z" fill="none" stroke="#d6b36d" stroke-width="7"/>
+
+<!-- fur highlights -->
+<g fill="none" stroke="#cab99f" stroke-width="7" opacity=".55">
+  <path d="M122 672c67-74 118-99 166-118"/><path d="M598 672c-66-74-117-99-165-118"/>
+  <path d="M98 760c80-80 139-105 191-123"/><path d="M622 760c-78-80-138-105-190-123"/>
+</g>
+
+<!-- bottom cinematic fade -->
+<rect y="738" width="720" height="162" fill="#05080d" opacity=".34"/>
 </svg>
