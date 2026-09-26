@@ -36,7 +36,20 @@ var stats: Dictionary = {"kut":61, "halk":54, "ordu":67, "hazine":46, "guven":58
 var year: int = 682
 var season: String = "Sonbahar"
 var cards: Array = []
-var card_index: int = 0
+var card_lookup: Dictionary = {}
+var scenario_start: String = ""
+var current_card_id: String = ""
+var turn_no: int = 0
+var story_state: Dictionary = {
+    "boy_anger": 0,
+    "kara_power": 0,
+    "kara_anger": 0,
+    "alp_loyalty": 0,
+    "altun_influence": 0,
+    "guard_loyalty": 0,
+    "plot": 0,
+    "arslan_support": 0
+}
 
 var menu_layer: Control
 var game_layer: Control
@@ -535,10 +548,27 @@ func _load_cards() -> void:
         return
 
     var parsed: Variant = JSON.parse_string(file.get_as_text())
-    if parsed is Array:
+    card_lookup.clear()
+    cards.clear()
+
+    if parsed is Dictionary:
+        var scenario: Dictionary = parsed as Dictionary
+        scenario_start = str(scenario.get("start_id", ""))
+        var loaded_cards: Array = scenario.get("cards", []) as Array
+        cards = loaded_cards
+        for item: Variant in loaded_cards:
+            var card: Dictionary = item as Dictionary
+            card_lookup[str(card.get("id", ""))] = card
+    elif parsed is Array:
         cards = parsed as Array
+        for item: Variant in cards:
+            var card: Dictionary = item as Dictionary
+            var id: String = str(card.get("id", ""))
+            card_lookup[id] = card
+            if scenario_start.is_empty():
+                scenario_start = id
     else:
-        push_error("cards.json geçerli bir dizi değil.")
+        push_error("cards.json geçerli bir senaryo değil.")
 
 func _show_menu() -> void:
     menu_layer.visible = true
@@ -546,9 +576,20 @@ func _show_menu() -> void:
 
 func _start_game() -> void:
     stats = {"kut":61, "halk":54, "ordu":67, "hazine":46, "guven":58}
+    story_state = {
+        "boy_anger": 0,
+        "kara_power": 0,
+        "kara_anger": 0,
+        "alp_loyalty": 0,
+        "altun_influence": 0,
+        "guard_loyalty": 0,
+        "plot": 0,
+        "arslan_support": 0
+    }
     year = 682
     season = "Sonbahar"
-    card_index = 0
+    turn_no = 0
+    current_card_id = scenario_start
     menu_layer.visible = false
     game_layer.visible = true
     _refresh_stats()
@@ -556,27 +597,39 @@ func _start_game() -> void:
     _play_intro()
 
 func _show_card() -> void:
-    if cards.is_empty():
+    if card_lookup.is_empty() or current_card_id.is_empty() or not card_lookup.has(current_card_id):
         speaker_label.text = "TÖRE"
-        card_text.text = "Kart verisi bulunamadı."
+        card_text.text = "Senaryonun yolu burada kayboldu."
+        left_button.disabled = true
+        right_button.disabled = true
         return
 
-    if card_index >= cards.size():
-        card_index = 0
-        year += 1
-        season = "İlkbahar"
+    var card: Dictionary = card_lookup[current_card_id] as Dictionary
+    var left_data: Dictionary = card.get("left", {}) as Dictionary
+    var right_data: Dictionary = card.get("right", {}) as Dictionary
 
-    var card: Dictionary = cards[card_index] as Dictionary
-    var left_data: Dictionary = card["left"] as Dictionary
-    var right_data: Dictionary = card["right"] as Dictionary
+    if card.has("year"):
+        year = int(card["year"])
+    if card.has("season"):
+        season = str(card["season"])
 
     var speaker: String = str(card.get("speaker", "BÖRÜ KAĞAN"))
     speaker_label.text = speaker
     _set_character(speaker)
     card_text.text = "“" + str(card.get("text", "")) + "”"
-    left_button.text = "←  " + str(left_data.get("text", ""))
-    right_button.text = str(right_data.get("text", "")) + "  →"
-    feedback_label.text = "Kararını ver, Ulu Tarkan."
+
+    var is_ending: bool = bool(card.get("ending", false))
+    if is_ending:
+        feedback_label.text = str(card.get("ending_title", "KAĞANLIK YILLIĞI"))
+        left_button.text = "YENİDEN BAŞLA"
+        right_button.text = "ANA MENÜ"
+        left_button.disabled = false
+        right_button.disabled = false
+    else:
+        left_button.text = "←  " + str(left_data.get("text", ""))
+        right_button.text = str(right_data.get("text", "")) + "  →"
+        feedback_label.text = str(card.get("hint", "Kararını ver, Ulu Tarkan."))
+
     _refresh_year()
 
 func _set_character(character_name: String) -> void:
@@ -589,27 +642,95 @@ func _set_character(character_name: String) -> void:
     ruler_desc.text = str(CHARACTER_DESCRIPTIONS.get(character_name, "Bozkırın konuğu"))
 
 func _choose(side: String) -> void:
-    if cards.is_empty():
+    if current_card_id.is_empty() or not card_lookup.has(current_card_id):
         return
 
-    var card: Dictionary = cards[card_index] as Dictionary
+    var card: Dictionary = card_lookup[current_card_id] as Dictionary
+
+    if bool(card.get("ending", false)):
+        if side == "left":
+            _start_game()
+        else:
+            _show_menu()
+        return
+
     var choice: Dictionary = card.get(side, {}) as Dictionary
     var effects: Dictionary = choice.get("effects", {}) as Dictionary
+    var hidden: Dictionary = choice.get("state", {}) as Dictionary
 
     for key: Variant in effects.keys():
         if stats.has(key):
             stats[key] = clampi(int(stats[key]) + int(effects[key]), 0, 100)
 
+    for key: Variant in hidden.keys():
+        story_state[key] = int(story_state.get(key, 0)) + int(hidden[key])
+
     feedback_label.text = _effects_text(effects)
     _refresh_stats()
-    card_index += 1
+    turn_no += 1
+
+    var next_id: String = _resolve_next(choice.get("next", ""))
+    if next_id.is_empty():
+        next_id = _resolve_next(card.get("next", ""))
 
     left_button.disabled = true
     right_button.disabled = true
-    await get_tree().create_timer(0.55).timeout
+    await get_tree().create_timer(0.5).timeout
     left_button.disabled = false
     right_button.disabled = false
+
+    current_card_id = next_id
     _show_card()
+
+func _resolve_next(next_value: Variant) -> String:
+    if next_value is String:
+        return str(next_value)
+
+    if next_value is Array:
+        var routes: Array = next_value as Array
+        for route_variant: Variant in routes:
+            var route: Dictionary = route_variant as Dictionary
+            if not route.has("when") or _condition_matches(route.get("when", {}) as Dictionary):
+                return str(route.get("id", ""))
+
+    return ""
+
+func _condition_matches(condition: Dictionary) -> bool:
+    if condition.is_empty():
+        return true
+
+    if condition.has("all"):
+        var all_conditions: Array = condition["all"] as Array
+        for item: Variant in all_conditions:
+            if not _condition_matches(item as Dictionary):
+                return false
+        return true
+
+    if condition.has("any"):
+        var any_conditions: Array = condition["any"] as Array
+        for item: Variant in any_conditions:
+            if _condition_matches(item as Dictionary):
+                return true
+        return false
+
+    var key: String = str(condition.get("key", ""))
+    var source: String = str(condition.get("source", "story"))
+    var value: int = int(story_state.get(key, 0))
+    if source == "stats":
+        value = int(stats.get(key, 0))
+
+    if condition.has("gte") and value < int(condition["gte"]):
+        return false
+    if condition.has("lte") and value > int(condition["lte"]):
+        return false
+    if condition.has("gt") and value <= int(condition["gt"]):
+        return false
+    if condition.has("lt") and value >= int(condition["lt"]):
+        return false
+    if condition.has("eq") and value != int(condition["eq"]):
+        return false
+
+    return true
 
 func _effects_text(effects: Dictionary) -> String:
     var names: Dictionary = {"kut":"Kut", "halk":"Halk", "ordu":"Ordu", "hazine":"Hazine", "guven":"Kağanın güveni"}
